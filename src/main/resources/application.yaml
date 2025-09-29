@@ -1,0 +1,14 @@
+app:
+  timezone: Europe/Moscow
+
+spring:
+  application:
+    name: mocknet
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mocknet-db
+    username: mocknet
+    password: mocknet
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
