@@ -2,9 +2,9 @@ package net.microgoose.mocknet.service;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.dto.CreateSlotBookingRequest;
-import net.microgoose.mocknet.dto.SlotBookingDto;
-import net.microgoose.mocknet.exception.ValidationException;
+import net.microgoose.mocknet.exception.NotFoundException;
 import net.microgoose.mocknet.mapper.SlotBookingMapper;
+import net.microgoose.mocknet.model.SlotBooking;
 import net.microgoose.mocknet.repository.SlotBookingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,23 +20,22 @@ public class SlotBookingService {
     private final InterviewSlotService interviewSlotService;
     private final SlotBookingMapper mapper;
 
-    @Transactional
-    public SlotBookingDto createSlotBooking(CreateSlotBookingRequest request) {
-        // TODO themself booking
-        interviewSlotService.bookSlot(request.getSlotId());
-        return mapper.toDto(repository.save(mapper.fromDto(request)));
-    }
-
     public boolean existById(UUID id) {
         return repository.existsById(id);
     }
 
-    public List<SlotBookingDto> getBookingsByInterviewer(UUID interviewerId) {
-        return mapper.toDto(repository.findByInterviewerId(interviewerId));
+    public List<SlotBooking> getBookingsByInterviewer(UUID interviewerId) {
+        return repository.findByInterviewerId(interviewerId);
     }
 
-    public SlotBookingDto getBookingBySlot(UUID slotId) {
-        return mapper.toDto(repository.findBySlotId(slotId)
-            .orElseThrow(() -> new ValidationException("Бронирование не найдено для слота: " + slotId)));
+    public SlotBooking getBookingBySlot(UUID slotId) {
+        return repository.findBySlotId(slotId)
+            .orElseThrow(() -> new NotFoundException("Бронирование не найдено для слота: " + slotId));
+    }
+
+    @Transactional
+    public SlotBooking createSlotBooking(CreateSlotBookingRequest request) {
+        interviewSlotService.bookSlot(request.getInterviewerId(), request.getSlotId());
+        return repository.save(mapper.fromDto(request));
     }
 }

@@ -3,7 +3,7 @@ package net.microgoose.mocknet.service;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.dto.CreateUserRequest;
 import net.microgoose.mocknet.dto.UpdateUserRequest;
-import net.microgoose.mocknet.dto.UserDto;
+import net.microgoose.mocknet.exception.NotFoundException;
 import net.microgoose.mocknet.exception.ValidationException;
 import net.microgoose.mocknet.mapper.UserMapper;
 import net.microgoose.mocknet.model.User;
@@ -23,48 +23,63 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
 
+    public boolean existById(UUID id) {
+        return repository.existsById(id);
+    }
+
+    public List<User> getAllUsers() {
+        return repository.findAll();
+    }
+
+    public User getUserById(UUID id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + id));
+    }
+
     @Transactional
-    public UserDto createUser(CreateUserRequest request) {
-        if (!emailValidator.isValidEmail(request.getEmail()))
-            throw new ValidationException("Некорректный email: " + request.getEmail());
-        if (repository.existsByEmail(request.getEmail()))
-            throw new ValidationException("Email уже существует: " + request.getEmail());
-        if (repository.existsByUsername(request.getUsername()))
-            throw new ValidationException("Имя пользователя уже существует: " + request.getUsername());
+    public User createUser(CreateUserRequest request) {
+        validateUserEmail(request.getEmail());
+        validateUsername(request.getUsername());
 
         User user = mapper.fromDto(request);
         user.setPasswordHash("password");
         user.setCreatedAt(Instant.now());
         user.setUpdatedAt(Instant.now());
-        return mapper.toDto(repository.save(user));
-    }
-
-    public List<UserDto> getAllUsers() {
-        return mapper.toDto(repository.findAll());
-    }
-
-    public UserDto getUserById(UUID id) {
-        return mapper.toDto(repository.findById(id)
-            .orElseThrow(() -> new ValidationException("Пользователь не найден: " + id)));
-    }
-
-    public boolean existById(UUID id) {
-        return repository.existsById(id);
+        return repository.save(user);
     }
 
     @Transactional
-    public UserDto updateUser(UpdateUserRequest user) {
-        User existing = repository.findById(user.getId())
-            .orElseThrow(() -> new ValidationException("Пользователь не найден: " + user.getId()));
+    public User updateUser(UpdateUserRequest request) {
+        validateUserEmail(request.getEmail());
+        validateUsername(request.getUsername());
 
-        existing.setUsername(user.getUsername());
-        existing.setEmail(user.getEmail());
+        User existing = getUserById(request.getId());
+        existing.setUsername(request.getUsername());
+        existing.setEmail(request.getEmail());
         existing.setUpdatedAt(Instant.now());
-        return mapper.toDto(repository.save(existing));
+
+        return repository.save(existing);
     }
 
     @Transactional
     public void deleteUser(UUID id) {
-        repository.deleteById(id);
+        if (existById(id)) {
+            repository.deleteById(id);
+            return;
+        }
+
+        throw new NotFoundException("Пользователь не найден");
+    }
+
+    private void validateUserEmail(String email) {
+        if (!emailValidator.isValidEmail(email))
+            throw new ValidationException("Некорректный email: " + email);
+        if (repository.existsByEmail(email))
+            throw new ValidationException("Email уже существует: " + email);
+    }
+
+    private void validateUsername(String username) {
+        if (repository.existsByUsername(username))
+            throw new ValidationException("Имя пользователя уже существует: " + username);
     }
 }

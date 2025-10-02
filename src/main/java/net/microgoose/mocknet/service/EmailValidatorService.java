@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 public class EmailValidatorService {
     
     public boolean isValidEmail(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9+_.-]+\\.[A-Za-z0-9+_.-]+$");
     }
 }

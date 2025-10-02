@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.microgoose.mocknet.dto.ErrorResponse;
+import net.microgoose.mocknet.exception.IllegalActionException;
+import net.microgoose.mocknet.exception.NotFoundException;
 import net.microgoose.mocknet.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +20,22 @@ import java.time.OffsetDateTime;
 public class ExceptionController {
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleBadRequest(ValidationException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleValidationError(ValidationException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleNotFoundError(NotFoundException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleIllegalActionError(IllegalActionException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleUnknownError(Exception ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, ErrorResponse.builder()
             .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .message("Внутреняя ошибка сервера")

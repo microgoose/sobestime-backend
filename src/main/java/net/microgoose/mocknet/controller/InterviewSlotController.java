@@ -3,11 +3,11 @@ package net.microgoose.mocknet.controller;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.dto.CreateInterviewSlotRequest;
 import net.microgoose.mocknet.dto.InterviewSlotDto;
+import net.microgoose.mocknet.mapper.InterviewSlotMapper;
 import net.microgoose.mocknet.service.InterviewSlotService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,25 +17,21 @@ import java.util.UUID;
 public class InterviewSlotController {
 
     private final InterviewSlotService service;
+    private final InterviewSlotMapper mapper;
 
     @GetMapping
     public List<InterviewSlotDto> getAllSlots() {
-        return service.getAllSlots();
+        return mapper.toDto(service.getAllSlots());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public InterviewSlotDto createSlot(@RequestBody CreateInterviewSlotRequest slot) {
-        return service.createSlot(slot);
-    }
-
-    @GetMapping("/available")
-    public List<InterviewSlotDto> getAvailableSlots(@RequestParam OffsetDateTime after) {
-        return service.getAvailableSlotsAfter(after);
+        return mapper.toDto(service.createSlot(slot));
     }
 
     @GetMapping("/{id}")
     public InterviewSlotDto getSlot(@PathVariable UUID id) {
-        return service.getSlotById(id);
+        return mapper.toDto(service.getSlotById(id));
     }
 }

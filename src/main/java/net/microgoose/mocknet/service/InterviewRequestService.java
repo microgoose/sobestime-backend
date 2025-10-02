@@ -2,9 +2,10 @@ package net.microgoose.mocknet.service;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.dto.CreateInterviewRequest;
-import net.microgoose.mocknet.dto.InterviewRequestDto;
+import net.microgoose.mocknet.exception.NotFoundException;
 import net.microgoose.mocknet.exception.ValidationException;
 import net.microgoose.mocknet.mapper.InterviewRequestMapper;
+import net.microgoose.mocknet.model.InterviewRequest;
 import net.microgoose.mocknet.repository.InterviewRequestRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +23,21 @@ public class InterviewRequestService {
     private final UserService userService;
     private final ProgrammingLanguageService languageService;
 
-    public List<InterviewRequestDto> getAllRequests() {
-        return mapper.toDto(repository.findAll());
+    public boolean existById(UUID id) {
+        return repository.existsById(id);
+    }
+
+    public List<InterviewRequest> getAllRequests() {
+        return repository.findAll();
+    }
+
+    public InterviewRequest getRequestById(UUID id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Запрос на интервью не найден: " + id));
     }
 
     @Transactional
-    public InterviewRequestDto createRequest(CreateInterviewRequest request) {
+    public InterviewRequest createRequest(CreateInterviewRequest request) {
         if (!userService.existById(request.getCreatorId()))
             throw new ValidationException("Пользователь не существует");
         if (!languageService.existById(request.getProgrammingLanguageId()))
@@ -42,15 +52,6 @@ public class InterviewRequestService {
         if (request.getDescription().length() > 50)
             throw new ValidationException("Описание не может быть длиннее 50 символов");
 
-        return mapper.toDto(repository.save(mapper.fromDto(request)));
-    }
-
-    public boolean existById(UUID id) {
-        return repository.existsById(id);
-    }
-
-    public InterviewRequestDto getRequestById(UUID id) {
-        return mapper.toDto(repository.findById(id)
-            .orElseThrow(() -> new ValidationException("Запрос на интервью не найден: " + id)));
+        return repository.save(mapper.fromDto(request));
     }
 }

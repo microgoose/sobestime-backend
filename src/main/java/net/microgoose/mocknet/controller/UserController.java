@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.dto.CreateUserRequest;
 import net.microgoose.mocknet.dto.UpdateUserRequest;
 import net.microgoose.mocknet.dto.UserDto;
+import net.microgoose.mocknet.mapper.UserMapper;
 import net.microgoose.mocknet.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,31 +18,32 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService service;
+    private final UserMapper mapper;
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        return service.getAllUsers();
+        return mapper.toDto(service.getAllUsers());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@RequestBody CreateUserRequest user) {
-        return service.createUser(user);
+        return mapper.toDto(service.createUser(user));
     }
 
     @GetMapping("/{id}")
     public UserDto getUser(@PathVariable UUID id) {
-        return service.getUserById(id);
+        return mapper.toDto(service.getUserById(id));
     }
 
     @PutMapping("/{id}")
     public UserDto updateUser(@RequestBody UpdateUserRequest request) {
-        return service.updateUser(request);
+        return mapper.toDto(service.updateUser(request));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable UUID id) {
-        service.deleteUser(id);
+       service.deleteUser(id);
     }
 }
