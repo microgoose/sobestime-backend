@@ -1,5 +1,5 @@
-# Используем Maven + JDK 25 для сборки
-FROM maven:3.9.3-eclipse-temurin-25 AS build
+# Используем Maven + JDK 21 для сборки
+FROM maven:3.9-eclipse-temurin-21 AS build
 # Рабочая директория
 WORKDIR /app
 # Копируем pom.xml и скачиваем зависимости (кэширование слоёв)
