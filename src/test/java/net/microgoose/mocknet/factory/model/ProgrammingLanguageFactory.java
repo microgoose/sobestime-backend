@@ -2,7 +2,7 @@
 package net.microgoose.mocknet.factory.model;
 
 import net.microgoose.mocknet.factory.ModelTestFactory;
-import net.microgoose.mocknet.model.ProgrammingLanguage;
+import net.microgoose.mocknet.interview.model.ProgrammingLanguage;
 
 import java.util.UUID;
 

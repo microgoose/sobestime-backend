@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.factory.dto;
 
-import net.microgoose.mocknet.dto.SlotBookingDto;
 import net.microgoose.mocknet.factory.DataTestFactory;
+import net.microgoose.mocknet.interview.dto.SlotBookingDto;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

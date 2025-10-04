@@ -1,8 +1,8 @@
 // InterviewRequestDtoFactory.java
 package net.microgoose.mocknet.factory.dto;
 
-import net.microgoose.mocknet.dto.InterviewRequestDto;
 import net.microgoose.mocknet.factory.DataTestFactory;
+import net.microgoose.mocknet.interview.dto.InterviewRequestDto;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

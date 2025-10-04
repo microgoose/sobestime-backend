@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.factory.dto;
 
-import net.microgoose.mocknet.dto.CreateProgrammingLanguageRequest;
 import net.microgoose.mocknet.factory.DataTestFactory;
+import net.microgoose.mocknet.interview.dto.CreateProgrammingLanguageRequest;
 
 public class CreateProgrammingLanguageRequestFactory implements DataTestFactory<CreateProgrammingLanguageRequest> {
 

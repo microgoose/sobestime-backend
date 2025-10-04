@@ -2,7 +2,7 @@
 package net.microgoose.mocknet.factory.model;
 
 import net.microgoose.mocknet.factory.ModelTestFactory;
-import net.microgoose.mocknet.model.InterviewSlot;
+import net.microgoose.mocknet.interview.model.InterviewSlot;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
