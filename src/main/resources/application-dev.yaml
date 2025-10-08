@@ -1,0 +1,4 @@
+app:
+  auth:
+    secure: false
+    same-site: 'None'
