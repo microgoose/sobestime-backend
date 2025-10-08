@@ -1,0 +1,31 @@
+package net.microgoose.mocknet.auth.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+@Entity
+@Table(name = "auth_roles")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Role {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    
+    @Column(nullable = false, unique = true, length = 50)
+    private String name;
+
+    private String description;
+    
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private Set<AuthUser> users = new HashSet<>();
+
+}

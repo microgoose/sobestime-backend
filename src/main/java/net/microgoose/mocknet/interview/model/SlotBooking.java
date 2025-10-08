@@ -2,7 +2,6 @@ package net.microgoose.mocknet.interview.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.microgoose.mocknet.user.model.User;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,8 +21,7 @@ public class SlotBooking {
     @ManyToOne
     private InterviewSlot slot;
 
-    @ManyToOne
-    private User interviewer;
+    private UUID interviewerId;
 
     private Instant bookedAt;
 }

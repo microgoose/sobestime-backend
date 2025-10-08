@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.factory.dto;
 
+import net.microgoose.mocknet.auth.dto.UpdateUserRequest;
 import net.microgoose.mocknet.factory.DataTestFactory;
-import net.microgoose.mocknet.user.dto.UpdateUserRequest;
 
 import java.util.UUID;
 

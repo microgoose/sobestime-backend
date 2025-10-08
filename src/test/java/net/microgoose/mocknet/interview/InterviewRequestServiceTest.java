@@ -1,5 +1,6 @@
 package net.microgoose.mocknet.interview;
 
+import net.microgoose.mocknet.auth.service.AuthUserService;
 import net.microgoose.mocknet.factory.TestDataFactoryExtension;
 import net.microgoose.mocknet.factory.TestFactory;
 import net.microgoose.mocknet.factory.dto.CreateInterviewRequestFactory;
@@ -10,7 +11,6 @@ import net.microgoose.mocknet.interview.model.InterviewRequest;
 import net.microgoose.mocknet.interview.repository.InterviewRequestRepository;
 import net.microgoose.mocknet.interview.service.InterviewRequestService;
 import net.microgoose.mocknet.interview.service.ProgrammingLanguageService;
-import net.microgoose.mocknet.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +34,7 @@ class InterviewRequestServiceTest {
     private CreateInterviewRequestFactory createInterviewRequestFactory;
 
     @Mock
-    private UserService userService;
+    private AuthUserService authUserService;
     @Mock
     private ProgrammingLanguageService languageService;
     @Mock
@@ -78,7 +78,7 @@ class InterviewRequestServiceTest {
     void createRequest_shouldCreateRequest() {
         CreateInterviewRequest request = createInterviewRequestFactory.createNew();
         InterviewRequest resultData = interviewRequestFactory.createPersisted();
-        when(userService.existById(request.getCreatorId())).thenReturn(true);
+        when(authUserService.existById(request.getCreatorId())).thenReturn(true);
         when(languageService.existById(request.getProgrammingLanguageId())).thenReturn(true);
         when(mapper.fromDto(any())).thenReturn(resultData);
         when(repository.save(any())).thenReturn(resultData);

@@ -5,7 +5,6 @@ import net.microgoose.mocknet.app.config.DateTimeService;
 import net.microgoose.mocknet.interview.dto.CreateInterviewRequest;
 import net.microgoose.mocknet.interview.dto.InterviewRequestDto;
 import net.microgoose.mocknet.interview.model.InterviewRequest;
-import net.microgoose.mocknet.user.model.User;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -22,7 +21,7 @@ public class InterviewRequestMapper {
         return InterviewRequest.builder()
             .title(request.getTitle())
             .description(request.getDescription())
-            .creator(User.builder().id(request.getCreatorId()).build())
+            .creatorId(request.getCreatorId())
             .programmingLanguage(programmingLanguageMapper.map(request.getProgrammingLanguageId()))
             .createdAt(Instant.now())
             .build();
@@ -34,7 +33,7 @@ public class InterviewRequestMapper {
             .title(request.getTitle())
             .description(request.getDescription())
             .programmingLanguageId(request.getProgrammingLanguage().getId())
-            .creatorId(request.getCreator().getId())
+            .creatorId(request.getCreatorId())
             .createdAt(dateTimeService.toOffsetDateTime(request.getCreatedAt()))
             .build();
     }

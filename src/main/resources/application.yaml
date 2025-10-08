@@ -1,5 +1,11 @@
 app:
   timezone: Europe/Moscow
+  auth:
+    jwt-secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    access-token-expiration: 15m
+    refresh-token-expiration: 30d
+    secure: true
+    same-site: 'Strict'
 
 spring:
   application:

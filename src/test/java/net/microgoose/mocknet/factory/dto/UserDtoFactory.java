@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.factory.dto;
 
+import net.microgoose.mocknet.auth.dto.UserDto;
 import net.microgoose.mocknet.factory.DataTestFactory;
-import net.microgoose.mocknet.user.dto.UserDto;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

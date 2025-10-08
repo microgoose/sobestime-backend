@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.factory.dto;
 
+import net.microgoose.mocknet.auth.dto.CreateUserRequest;
 import net.microgoose.mocknet.factory.DataTestFactory;
-import net.microgoose.mocknet.user.dto.CreateUserRequest;
 
 public class CreateUserRequestFactory implements DataTestFactory<CreateUserRequest> {
 

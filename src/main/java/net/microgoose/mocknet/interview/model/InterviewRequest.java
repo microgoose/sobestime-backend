@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.interview.model;
+
 import jakarta.persistence.*;
 import lombok.*;
-import net.microgoose.mocknet.user.model.User;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -18,8 +18,7 @@ public class InterviewRequest {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    private User creator;
+    private UUID creatorId;
 
     @ManyToOne
     private ProgrammingLanguage programmingLanguage;

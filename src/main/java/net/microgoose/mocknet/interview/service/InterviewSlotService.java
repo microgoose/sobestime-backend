@@ -51,7 +51,7 @@ public class InterviewSlotService {
     @Transactional
     public InterviewSlot bookSlot(UUID interviewerId, UUID slotId) {
         InterviewSlot slot = getSlotById(slotId);
-        UUID creatorId = slot.getInterviewRequest().getCreator().getId();
+        UUID creatorId = slot.getInterviewRequest().getCreatorId();
 
         if (Objects.equals(interviewerId, creatorId))
             throw new ValidationException("Нельзя забронировать свой же слот");

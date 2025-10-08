@@ -6,7 +6,6 @@ import net.microgoose.mocknet.interview.dto.CreateSlotBookingRequest;
 import net.microgoose.mocknet.interview.dto.SlotBookingDto;
 import net.microgoose.mocknet.interview.model.InterviewSlot;
 import net.microgoose.mocknet.interview.model.SlotBooking;
-import net.microgoose.mocknet.user.model.User;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -21,7 +20,7 @@ public class SlotBookingMapper {
     public SlotBooking fromDto(CreateSlotBookingRequest request) {
         return SlotBooking.builder()
             .slot(InterviewSlot.builder().id(request.getSlotId()).build())
-            .interviewer(User.builder().id(request.getInterviewerId()).build())
+            .interviewerId(request.getInterviewerId())
             .bookedAt(Instant.now())
             .build();
     }
@@ -30,7 +29,7 @@ public class SlotBookingMapper {
         return SlotBookingDto.builder()
             .id(request.getId())
             .slotId(request.getSlot().getId())
-            .interviewerId(request.getInterviewer().getId())
+            .interviewerId(request.getInterviewerId())
             .bookedAt(dateTimeService.toOffsetDateTime(request.getBookedAt()))
             .build();
     }

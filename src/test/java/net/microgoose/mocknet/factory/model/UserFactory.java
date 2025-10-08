@@ -1,17 +1,17 @@
 // UserFactory.java
 package net.microgoose.mocknet.factory.model;
 
+import net.microgoose.mocknet.auth.model.AuthUser;
 import net.microgoose.mocknet.factory.ModelTestFactory;
-import net.microgoose.mocknet.user.model.User;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public class UserFactory implements ModelTestFactory<User> {
+public class UserFactory implements ModelTestFactory<AuthUser> {
     
     @Override
-    public User createNew() {
-        return User.builder()
+    public AuthUser createNew() {
+        return AuthUser.builder()
             .id(UUID.randomUUID())
             .username("newuser")
             .email("new@example.com")
@@ -22,8 +22,8 @@ public class UserFactory implements ModelTestFactory<User> {
     }
 
     @Override
-    public User createPersisted() {
-        return User.builder()
+    public AuthUser createPersisted() {
+        return AuthUser.builder()
             .id(UUID.fromString("bb345678-1234-1234-1234-123456789abc"))
             .username("existinguser")
             .email("existing@example.com")
@@ -34,8 +34,8 @@ public class UserFactory implements ModelTestFactory<User> {
     }
 
     @Override
-    public User createValid() {
-        return User.builder()
+    public AuthUser createValid() {
+        return AuthUser.builder()
             .id(UUID.randomUUID())
             .username("validuser")
             .email("valid@example.com")
