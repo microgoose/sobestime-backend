@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "interview_slots")
+@Table(name = "interview_slot")
 public class InterviewSlot {
     @Id
     @GeneratedValue

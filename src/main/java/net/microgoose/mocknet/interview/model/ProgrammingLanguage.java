@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "programming_languages")
+@Table(name = "programming_language")
 public class ProgrammingLanguage {
     @Id
     @GeneratedValue

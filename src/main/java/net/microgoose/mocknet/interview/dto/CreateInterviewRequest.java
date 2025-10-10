@@ -10,7 +10,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class CreateInterviewRequest {
-    UUID creatorId;
     UUID programmingLanguageId;
     String title;
     String description;

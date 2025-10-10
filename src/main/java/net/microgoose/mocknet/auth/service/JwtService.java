@@ -6,8 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.config.TokenConfig;
-import net.microgoose.mocknet.auth.dto.TokenDto;
-import net.microgoose.mocknet.auth.model.AuthUser;
+import net.microgoose.mocknet.auth.dto.AuthTokensDto;
+import net.microgoose.mocknet.auth.model.UserPrincipal;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -44,18 +44,18 @@ public class JwtService {
             .getSubject();
     }
 
-    public TokenDto generateTokenPair(String email, Map<String, Object> claims) {
+    public AuthTokensDto generateTokenPair(String email, Map<String, Object> claims) {
         String accessToken = generateAccessToken(email, claims);
         String refreshToken = generateRefreshToken(email);
 
-        return TokenDto.builder()
+        return AuthTokensDto.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .build();
     }
 
-    public TokenDto generateTokenPair(AuthUser authUser) {
-        String email = authUser.getEmail();
+    public AuthTokensDto generateTokenPair(UserPrincipal userPrincipal) {
+        String email = userPrincipal.getEmail();
         return generateTokenPair(email, null);
     }
 

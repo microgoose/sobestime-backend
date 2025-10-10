@@ -3,7 +3,6 @@ package net.microgoose.mocknet.interview.service;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.NotFoundException;
 import net.microgoose.mocknet.app.exception.ValidationException;
-import net.microgoose.mocknet.auth.service.AuthUserService;
 import net.microgoose.mocknet.interview.dto.CreateInterviewRequest;
 import net.microgoose.mocknet.interview.mapper.InterviewRequestMapper;
 import net.microgoose.mocknet.interview.model.InterviewRequest;
@@ -21,7 +20,6 @@ public class InterviewRequestService {
 
     private final InterviewRequestRepository repository;
     private final InterviewRequestMapper mapper;
-    private final AuthUserService authUserService; // TODO прямой вызов микросервиса, нежелательно
     private final ProgrammingLanguageService languageService;
 
     public boolean existById(UUID id) {
@@ -38,9 +36,7 @@ public class InterviewRequestService {
     }
 
     @Transactional
-    public InterviewRequest createRequest(CreateInterviewRequest request) {
-        if (!authUserService.existById(request.getCreatorId()))
-            throw new ValidationException("Пользователь не существует");
+    public InterviewRequest createRequest(UUID creatorId, CreateInterviewRequest request) {
         if (!languageService.existById(request.getProgrammingLanguageId()))
             throw new ValidationException("Язык программирования не существует");
 
@@ -53,6 +49,6 @@ public class InterviewRequestService {
         if (request.getDescription().length() > 50)
             throw new ValidationException("Описание не может быть длиннее 50 символов");
 
-        return repository.save(mapper.fromDto(request));
+        return repository.save(mapper.fromDto(creatorId, request));
     }
 }

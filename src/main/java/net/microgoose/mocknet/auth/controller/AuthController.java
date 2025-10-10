@@ -1,9 +1,9 @@
 package net.microgoose.mocknet.auth.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.auth.dto.AccessTokenResponse;
 import net.microgoose.mocknet.auth.dto.AuthRequest;
-import net.microgoose.mocknet.auth.dto.TokenDto;
+import net.microgoose.mocknet.auth.dto.AuthResponse;
+import net.microgoose.mocknet.auth.dto.AuthTokensDto;
 import net.microgoose.mocknet.auth.service.LoginService;
 import net.microgoose.mocknet.auth.service.RegisterService;
 import net.microgoose.mocknet.auth.service.TokenCookieService;
@@ -25,12 +25,16 @@ public class AuthController {
     private final RegisterService registerService;
     private final TokenCookieService tokenCookieService;
 
+    // TODO logout
+    // TODO password recovery
+    // TODO disable/ban user
+
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenResponse> login(@RequestBody AuthRequest request) {
-        TokenDto tokenDto = loginService.login(request);
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        AuthTokensDto tokenDto = loginService.login(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 
-        AccessTokenResponse response = AccessTokenResponse.builder()
+        AuthResponse response = AuthResponse.builder()
             .accessToken(tokenDto.getAccessToken())
             .build();
 
@@ -40,11 +44,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AccessTokenResponse> register(@RequestBody AuthRequest request) {
-        TokenDto tokenDto = registerService.register(request);
+    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest request) {
+        AuthTokensDto tokenDto = registerService.register(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 
-        AccessTokenResponse response = AccessTokenResponse.builder()
+        AuthResponse response = AuthResponse.builder()
             .accessToken(tokenDto.getAccessToken())
             .build();
 

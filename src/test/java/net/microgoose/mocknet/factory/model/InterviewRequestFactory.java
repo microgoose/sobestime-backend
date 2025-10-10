@@ -5,10 +5,10 @@ import net.microgoose.mocknet.factory.ModelTestFactory;
 import net.microgoose.mocknet.interview.model.InterviewRequest;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public class InterviewRequestFactory implements ModelTestFactory<InterviewRequest> {
     
-    private final UserFactory userFactory = new UserFactory();
     private final ProgrammingLanguageFactory programmingLanguageFactory = new ProgrammingLanguageFactory();
 
     @Override
@@ -16,7 +16,7 @@ public class InterviewRequestFactory implements ModelTestFactory<InterviewReques
         return InterviewRequest.builder()
             .title("New Title")
             .description("New Description")
-            .creator(userFactory.createNew())
+            .creatorId(UUID.randomUUID())
             .programmingLanguage(programmingLanguageFactory.createNew())
             .createdAt(Instant.now())
             .build();
@@ -27,7 +27,7 @@ public class InterviewRequestFactory implements ModelTestFactory<InterviewReques
         return InterviewRequest.builder()
             .title("Existing Title")
             .description("Existing Description")
-            .creator(userFactory.createPersisted())
+            .creatorId(UUID.randomUUID())
             .programmingLanguage(programmingLanguageFactory.createPersisted())
             .createdAt(Instant.now().minusSeconds(3600))
             .build();
@@ -38,7 +38,7 @@ public class InterviewRequestFactory implements ModelTestFactory<InterviewReques
         return InterviewRequest.builder()
             .title("Valid Title")
             .description("Valid Description")
-            .creator(userFactory.createValid())
+            .creatorId(UUID.randomUUID())
             .programmingLanguage(programmingLanguageFactory.createValid())
             .createdAt(Instant.now())
             .build();

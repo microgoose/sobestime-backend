@@ -2,8 +2,8 @@ package net.microgoose.mocknet.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.dto.AuthRequest;
-import net.microgoose.mocknet.auth.dto.TokenDto;
-import net.microgoose.mocknet.auth.model.AuthUser;
+import net.microgoose.mocknet.auth.dto.AuthTokensDto;
+import net.microgoose.mocknet.auth.model.UserPrincipal;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,10 +13,10 @@ public class RegisterService {
     private final AuthUserService authUserService;
     private final JwtService jwtService;
 
-    public TokenDto register(AuthRequest request) {
+    public AuthTokensDto register(AuthRequest request) {
         // TODO Send verification email
-        AuthUser authUser = authUserService.createUser(request);
-        return jwtService.generateTokenPair(authUser);
+        UserPrincipal userPrincipal = authUserService.createUser(request);
+        return jwtService.generateTokenPair(userPrincipal);
     }
 
 }

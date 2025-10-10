@@ -10,13 +10,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "auth_users")
+@Table(name = "user_principal")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthUser {
+public class UserPrincipal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,8 +49,8 @@ public class AuthUser {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "auth_user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
+        name = "user_principal_roles",
+        joinColumns = @JoinColumn(name = "user_principal_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;

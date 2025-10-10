@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -17,11 +18,11 @@ public class InterviewRequestMapper {
     private final ProgrammingLanguageMapper programmingLanguageMapper;
     private final DateTimeService dateTimeService;
 
-    public InterviewRequest fromDto(CreateInterviewRequest request) {
+    public InterviewRequest fromDto(UUID creatorId, CreateInterviewRequest request) {
         return InterviewRequest.builder()
             .title(request.getTitle())
             .description(request.getDescription())
-            .creatorId(request.getCreatorId())
+            .creatorId(creatorId)
             .programmingLanguage(programmingLanguageMapper.map(request.getProgrammingLanguageId()))
             .createdAt(Instant.now())
             .build();

@@ -2,6 +2,7 @@ package net.microgoose.mocknet.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.security.JwtAuthenticationFilter;
+import net.microgoose.mocknet.auth.security.UserHeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
+    private final UserHeaderFilter userHeaderFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,6 +33,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(userHeaderFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 

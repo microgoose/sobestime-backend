@@ -10,14 +10,13 @@ import java.util.UUID;
 public class SlotBookingFactory implements ModelTestFactory<SlotBooking> {
     
     private final InterviewSlotFactory interviewSlotFactory = new InterviewSlotFactory();
-    private final UserFactory userFactory = new UserFactory();
 
     @Override
     public SlotBooking createNew() {
         return SlotBooking.builder()
             .id(UUID.randomUUID())
             .slot(interviewSlotFactory.createNew())
-            .interviewer(userFactory.createNew())
+            .interviewerId(UUID.randomUUID())
             .bookedAt(Instant.now())
             .build();
     }
@@ -27,7 +26,7 @@ public class SlotBookingFactory implements ModelTestFactory<SlotBooking> {
         return SlotBooking.builder()
             .id(UUID.fromString("88345678-1234-1234-1234-123456789abc"))
             .slot(interviewSlotFactory.createPersisted())
-            .interviewer(userFactory.createPersisted())
+            .interviewerId(UUID.fromString("81345678-1234-1234-1234-123456789abc"))
             .bookedAt(Instant.now().minusSeconds(3600))
             .build();
     }
@@ -37,7 +36,7 @@ public class SlotBookingFactory implements ModelTestFactory<SlotBooking> {
         return SlotBooking.builder()
             .id(UUID.randomUUID())
             .slot(interviewSlotFactory.createValid())
-            .interviewer(userFactory.createValid())
+            .interviewerId(UUID.fromString("8v345678-1234-1234-1234-123456789abc"))
             .bookedAt(Instant.now())
             .build();
     }

@@ -4,44 +4,38 @@ import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.NotFoundException;
 import net.microgoose.mocknet.app.exception.ValidationException;
 import net.microgoose.mocknet.auth.dto.AuthRequest;
-import net.microgoose.mocknet.auth.mapper.AuthUserMapper;
-import net.microgoose.mocknet.auth.model.AuthUser;
+import net.microgoose.mocknet.auth.mapper.UserPrincipalMapper;
 import net.microgoose.mocknet.auth.model.Role;
-import net.microgoose.mocknet.auth.repository.AuthUserRepository;
+import net.microgoose.mocknet.auth.model.UserPrincipal;
+import net.microgoose.mocknet.auth.repository.UserPrincipalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthUserService {
 
     private final EmailService emailValidator;
-    private final AuthUserRepository repository;
-    private final AuthUserMapper mapper;
+    private final UserPrincipalRepository repository;
+    private final UserPrincipalMapper mapper;
     private final AuthRequestService authRequestService;
     private final RoleService roleService;
 
-    public boolean existById(UUID id) {
-        return repository.existsById(id);
-    }
-
-    public AuthUser getUserByEmail(String email) {
+    public UserPrincipal getUserByEmail(String email) {
         return repository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + email));
     }
 
     @Transactional
-    public AuthUser createUser(AuthRequest request) {
+    public UserPrincipal createUser(AuthRequest request) {
         authRequestService.validate(request);
         validateUserEmail(request.getEmail());
-        AuthUser authUser = mapper.fromDto(request);
+        UserPrincipal userPrincipal = mapper.fromDto(request);
 
         Role userRole = roleService.findByName("ROLE_USER");
-        authUser.getRoles().add(userRole);
+        userPrincipal.getRoles().add(userRole);
 
-        return repository.save(authUser);
+        return repository.save(userPrincipal);
     }
 
     private void validateUserEmail(String email) {

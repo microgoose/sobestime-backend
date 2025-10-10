@@ -1,54 +1,59 @@
 package net.microgoose.mocknet.auth.security;
 
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.auth.model.AuthUser;
+import net.microgoose.mocknet.auth.model.UserPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final AuthUser authUser;
+    private final UserPrincipal userPrincipal;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authUser.getRoles().stream()
+        return userPrincipal.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority(role.getName()))
             .collect(Collectors.toList());
     }
 
+    public UUID getId() {
+        return userPrincipal.getId();
+    }
+
     @Override
     public String getPassword() {
-        return authUser.getPassword();
+        return userPrincipal.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return authUser.getEmail();
+        return userPrincipal.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return authUser.isAccountNonExpired();
+        return userPrincipal.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return authUser.isAccountNonLocked();
+        return userPrincipal.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return authUser.isCredentialsNonExpired();
+        return userPrincipal.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return authUser.isEnabled();
+        return userPrincipal.isEnabled();
     }
 
 }

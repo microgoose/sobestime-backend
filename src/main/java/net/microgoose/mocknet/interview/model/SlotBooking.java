@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "slot_bookings")
+@Table(name = "slot_booking")
 public class SlotBooking {
     @Id
     @GeneratedValue

@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "auth_roles")
+@Table(name = "role")
 @Getter
 @Setter
 @Builder
@@ -26,6 +26,6 @@ public class Role {
     private String description;
     
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Set<AuthUser> users = new HashSet<>();
+    private Set<UserPrincipal> users = new HashSet<>();
 
 }

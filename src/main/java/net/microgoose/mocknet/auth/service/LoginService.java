@@ -3,8 +3,8 @@ package net.microgoose.mocknet.auth.service;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.ValidationException;
 import net.microgoose.mocknet.auth.dto.AuthRequest;
-import net.microgoose.mocknet.auth.dto.TokenDto;
-import net.microgoose.mocknet.auth.model.AuthUser;
+import net.microgoose.mocknet.auth.dto.AuthTokensDto;
+import net.microgoose.mocknet.auth.model.UserPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +17,15 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
     private final AuthRequestService authRequestService;
 
-    public TokenDto login(AuthRequest request) {
+    public AuthTokensDto login(AuthRequest request) {
         authRequestService.validate(request);
-        AuthUser authUser = authUserService.getUserByEmail(request.getEmail());
+        UserPrincipal userPrincipal = authUserService.getUserByEmail(request.getEmail());
 
-        if (!passwordEncoder.matches(request.getPassword(), authUser.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), userPrincipal.getPassword())) {
             throw new ValidationException("Неверный email или пароль");
         }
 
-        return jwtService.generateTokenPair(authUser);
+        return jwtService.generateTokenPair(userPrincipal);
     }
 
 }

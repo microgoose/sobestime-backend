@@ -26,8 +26,10 @@ public class InterviewRequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InterviewRequestDto createRequest(@RequestBody CreateInterviewRequest request) {
-        return mapper.toDto(service.createRequest(request));
+    public InterviewRequestDto createRequest(@RequestAttribute("X-User-Id") UUID userId,
+                                             @RequestBody CreateInterviewRequest request) {
+
+        return mapper.toDto(service.createRequest(userId, request));
     }
 
     @GetMapping("/{id}")

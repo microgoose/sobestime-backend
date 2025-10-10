@@ -10,7 +10,6 @@ public class CreateInterviewRequestFactory implements DataTestFactory<CreateInte
     @Override
     public CreateInterviewRequest createNew() {
         return CreateInterviewRequest.builder()
-            .creatorId(UUID.randomUUID())
             .programmingLanguageId(UUID.randomUUID())
             .title("New Create Request Title")
             .description("New Create Request Description")
@@ -20,7 +19,6 @@ public class CreateInterviewRequestFactory implements DataTestFactory<CreateInte
     @Override
     public CreateInterviewRequest createValid() {
         return CreateInterviewRequest.builder()
-            .creatorId(UUID.randomUUID())
             .programmingLanguageId(UUID.randomUUID())
             .title("Valid Title")
             .description("Valid Description")

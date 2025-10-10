@@ -78,12 +78,11 @@ class InterviewRequestServiceTest {
     void createRequest_shouldCreateRequest() {
         CreateInterviewRequest request = createInterviewRequestFactory.createNew();
         InterviewRequest resultData = interviewRequestFactory.createPersisted();
-        when(authUserService.existById(request.getCreatorId())).thenReturn(true);
         when(languageService.existById(request.getProgrammingLanguageId())).thenReturn(true);
-        when(mapper.fromDto(any())).thenReturn(resultData);
+        when(mapper.fromDto(any(), any())).thenReturn(resultData);
         when(repository.save(any())).thenReturn(resultData);
 
-        InterviewRequest result = service.createRequest(request);
+        InterviewRequest result = service.createRequest(resultData.getCreatorId(), request);
         verify(repository, times(1)).save(resultData);
         assertEquals(resultData, result);
     }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "interview_sessions")
+@Table(name = "interview_session")
 public class InterviewSession {
     @Id
     @GeneratedValue
