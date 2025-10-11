@@ -1,6 +1,6 @@
 package net.microgoose.mocknet.interview;
 
-import net.microgoose.mocknet.auth.service.AuthUserService;
+import net.microgoose.mocknet.auth.service.UserPrincipalService;
 import net.microgoose.mocknet.factory.TestDataFactoryExtension;
 import net.microgoose.mocknet.factory.TestFactory;
 import net.microgoose.mocknet.factory.dto.CreateInterviewRequestFactory;
@@ -34,7 +34,7 @@ class InterviewRequestServiceTest {
     private CreateInterviewRequestFactory createInterviewRequestFactory;
 
     @Mock
-    private AuthUserService authUserService;
+    private UserPrincipalService userPrincipalService;
     @Mock
     private ProgrammingLanguageService languageService;
     @Mock

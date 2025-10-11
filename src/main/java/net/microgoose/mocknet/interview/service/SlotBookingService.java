@@ -20,10 +20,6 @@ public class SlotBookingService {
     private final InterviewSlotService interviewSlotService;
     private final SlotBookingMapper mapper;
 
-    public boolean existById(UUID id) {
-        return repository.existsById(id);
-    }
-
     public List<SlotBooking> getBookingsByInterviewer(UUID interviewerId) {
         return repository.findByInterviewerId(interviewerId);
     }

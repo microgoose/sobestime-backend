@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.dto.AuthRequest;
 import net.microgoose.mocknet.auth.dto.AuthResponse;
 import net.microgoose.mocknet.auth.dto.AuthTokensDto;
-import net.microgoose.mocknet.auth.service.LoginService;
-import net.microgoose.mocknet.auth.service.RegisterService;
+import net.microgoose.mocknet.auth.service.AuthService;
 import net.microgoose.mocknet.auth.service.TokenCookieService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final LoginService loginService;
-    private final RegisterService registerService;
+    private final AuthService authService;
     private final TokenCookieService tokenCookieService;
 
     // TODO logout
@@ -31,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        AuthTokensDto tokenDto = loginService.login(request);
+        AuthTokensDto tokenDto = authService.login(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 
         AuthResponse response = AuthResponse.builder()
@@ -45,7 +43,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest request) {
-        AuthTokensDto tokenDto = registerService.register(request);
+        AuthTokensDto tokenDto = authService.register(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 
         AuthResponse response = AuthResponse.builder()

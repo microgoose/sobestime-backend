@@ -19,6 +19,9 @@ public class TokenConfig {
     @Value("${app.auth.refresh-token-expiration}")
     private Duration refreshTokenExpiration;
 
+    @Value("${app.auth.refresh-token-path}")
+    private String refreshTokenPath;
+
     @Value("${app.auth.secure}")
     private boolean secure;
 

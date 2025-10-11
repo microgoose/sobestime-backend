@@ -1,8 +1,8 @@
 package net.microgoose.mocknet.auth.config;
 
 import lombok.RequiredArgsConstructor;
+import net.microgoose.mocknet.auth.security.AuthAttributesFilter;
 import net.microgoose.mocknet.auth.security.JwtAuthenticationFilter;
-import net.microgoose.mocknet.auth.security.UserHeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
-    private final UserHeaderFilter userHeaderFilter;
+    private final AuthAttributesFilter authAttributesFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,13 +26,13 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(authAttributesFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").anonymous()
                 .requestMatchers("/api/v1/role").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterAfter(userHeaderFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 

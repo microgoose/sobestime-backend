@@ -1,5 +1,6 @@
 package net.microgoose.mocknet.auth.service;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,12 +24,26 @@ public class JwtService {
 
     private final TokenConfig tokenConfig;
 
-    public boolean validateToken(String token) {
+    public boolean isValid(String token) {
         try {
             Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public boolean isExpired(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
+            return false;
+        } catch (ExpiredJwtException e) {
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;

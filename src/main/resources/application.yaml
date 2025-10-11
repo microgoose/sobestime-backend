@@ -1,11 +1,16 @@
 app:
   timezone: Europe/Moscow
   auth:
+    header-name: Authorization
+    header-prefix: Bearer
     jwt-secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    access-token-name: accessToken
+    refresh-token-name: refreshToken
     access-token-expiration: 15m
     refresh-token-expiration: 30d
+    refresh-token-path: /api
     secure: true
-    same-site: 'Strict'
+    same-site: Strict
 
 spring:
   application:

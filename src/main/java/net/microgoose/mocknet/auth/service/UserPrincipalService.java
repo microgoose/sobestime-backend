@@ -8,17 +8,17 @@ import net.microgoose.mocknet.auth.mapper.UserPrincipalMapper;
 import net.microgoose.mocknet.auth.model.Role;
 import net.microgoose.mocknet.auth.model.UserPrincipal;
 import net.microgoose.mocknet.auth.repository.UserPrincipalRepository;
+import net.microgoose.mocknet.auth.util.EmailValidationUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
-public class AuthUserService {
+public class UserPrincipalService {
 
-    private final EmailService emailValidator;
     private final UserPrincipalRepository repository;
     private final UserPrincipalMapper mapper;
-    private final AuthRequestService authRequestService;
     private final RoleService roleService;
 
     public UserPrincipal getUserByEmail(String email) {
@@ -28,7 +28,9 @@ public class AuthUserService {
 
     @Transactional
     public UserPrincipal createUser(AuthRequest request) {
-        authRequestService.validate(request);
+        if (!StringUtils.hasText(request.getPassword()))
+            throw new ValidationException("Не указан пароль");
+
         validateUserEmail(request.getEmail());
         UserPrincipal userPrincipal = mapper.fromDto(request);
 
@@ -39,7 +41,7 @@ public class AuthUserService {
     }
 
     private void validateUserEmail(String email) {
-        if (!emailValidator.isValidEmail(email))
+        if (!EmailValidationUtil.isValidEmail(email))
             throw new ValidationException("Некорректный email: " + email);
         if (repository.existsByEmail(email))
             throw new ValidationException("Email уже существует: " + email);
