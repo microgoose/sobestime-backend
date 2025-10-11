@@ -28,8 +28,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/v1/auth/**").permitAll()
-                // TODO
-                // .requestMatchers("/api/v1/auth/role").hasRole("ROLE_ADMIN")
+                .requestMatchers("/api/v1/role").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

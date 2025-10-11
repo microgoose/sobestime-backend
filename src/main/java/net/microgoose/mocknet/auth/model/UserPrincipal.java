@@ -39,17 +39,15 @@ public class UserPrincipal {
     @Column(name = "credentials_non_expired")
     private boolean credentialsNonExpired = true;
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "user_principal_roles",
+        name = "user_principal_role",
         joinColumns = @JoinColumn(name = "user_principal_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )

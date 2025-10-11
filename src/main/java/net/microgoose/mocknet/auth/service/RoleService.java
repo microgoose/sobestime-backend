@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.NotFoundException;
 import net.microgoose.mocknet.app.exception.ValidationException;
 import net.microgoose.mocknet.auth.dto.CreateRoleRequest;
+import net.microgoose.mocknet.auth.dto.RoleDto;
 import net.microgoose.mocknet.auth.model.Role;
 import net.microgoose.mocknet.auth.repository.RoleRepository;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class RoleService {
             .orElseThrow(() -> new NotFoundException("Не удалось найти роль с именем: " + name));
     }
 
-    public Role createRole(CreateRoleRequest request) {
+    public RoleDto createRole(CreateRoleRequest request) {
         if (!StringUtils.hasText(request.getName()))
             throw new ValidationException("Не указано имя роли");
         if (!request.getName().startsWith("ROLE_"))
@@ -30,8 +31,14 @@ public class RoleService {
         if (repository.existsByName(request.getName()))
             throw new ValidationException("Роль с именем '" + request.getName() + "' уже существует");
 
-        return Role.builder()
+        Role role = repository.save(Role.builder()
             .name(request.getName())
+            .description(request.getDescription())
+            .build());
+
+        return RoleDto.builder()
+            .id(role.getId())
+            .name(role.getName())
             .description(request.getDescription())
             .build();
     }
