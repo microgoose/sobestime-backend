@@ -35,49 +35,92 @@ CREATE TABLE IF NOT EXISTS user_principal_role
 );
 
 
--- Языки программирования
-CREATE TABLE IF NOT EXISTS programming_language
+-- Таблица пользователей
+CREATE TABLE IF NOT EXISTS interview_user
 (
-    id   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(50) NOT NULL UNIQUE
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username   VARCHAR(255) NOT NULL,
+    avatar_url VARCHAR(500)
 );
 
--- Заявки на интервью
+-- Таблица ролей
+CREATE TABLE IF NOT EXISTS interview_role
+(
+    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL
+);
+
+-- Таблица навыков
+CREATE TABLE IF NOT EXISTS skill
+(
+    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL
+);
+
+-- Таблица грейдов
+CREATE TABLE IF NOT EXISTS grade
+(
+    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL
+);
+
+-- Основная таблица заявок на собеседование
 CREATE TABLE IF NOT EXISTS interview_request
 (
-    id                      UUID PRIMARY KEY         DEFAULT uuid_generate_v4(),
-    creator_id              UUID NOT NULL,
-    programming_language_id UUID NOT NULL REFERENCES programming_language (id) ON DELETE RESTRICT,
-    title                   VARCHAR(255),
-    description             TEXT,
-    created_at              TIMESTAMP WITH TIME ZONE DEFAULT now()
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    description TEXT,
+    creator_id  UUID NOT NULL,
+    role_id     UUID NOT NULL,
+    FOREIGN KEY (creator_id) REFERENCES interview_user (id),
+    FOREIGN KEY (role_id) REFERENCES interview_role (id)
 );
 
--- Свободные слоты для интервью
+-- Таблица слотов собеседований
 CREATE TABLE IF NOT EXISTS interview_slot
 (
-    id                   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    interview_request_id UUID                     NOT NULL REFERENCES interview_request (id) ON DELETE CASCADE,
-    start_time           TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_time             TIMESTAMP WITH TIME ZONE NOT NULL,
-    is_booked            BOOLEAN          DEFAULT FALSE
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    status     VARCHAR(100)             NOT NULL,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    request_id UUID                     NOT NULL,
+    FOREIGN KEY (request_id) REFERENCES interview_request (id)
 );
 
--- Бронирование слота (выбор интервьюером)
-CREATE TABLE IF NOT EXISTS slot_booking
+-- Связующая таблица для слотов и бронирующих
+CREATE TABLE IF NOT EXISTS interview_slot_booker
 (
-    id             UUID PRIMARY KEY         DEFAULT uuid_generate_v4(),
-    slot_id        UUID NOT NULL REFERENCES interview_slot (id) ON DELETE CASCADE,
-    interviewer_id UUID NOT NULL,
-    booked_at      TIMESTAMP WITH TIME ZONE DEFAULT now(),
-    UNIQUE (slot_id) -- чтобы один слот мог быть забронирован только один раз
+    slot_id   UUID NOT NULL,
+    booker_id UUID NOT NULL,
+    PRIMARY KEY (slot_id, booker_id),
+    FOREIGN KEY (slot_id) REFERENCES interview_slot (id),
+    FOREIGN KEY (booker_id) REFERENCES interview_user (id)
 );
 
--- Сессии интервью (ссылка на видеозвонок)
-CREATE TABLE IF NOT EXISTS interview_session
+-- Связующая таблица для заявок и грейдов
+CREATE TABLE IF NOT EXISTS interview_request_grade
 (
-    id              UUID PRIMARY KEY         DEFAULT uuid_generate_v4(),
-    slot_booking_id UUID NOT NULL REFERENCES slot_booking (id) ON DELETE CASCADE,
-    session_link    TEXT NOT NULL,
-    created_at      TIMESTAMP WITH TIME ZONE DEFAULT now()
+    request_id UUID NOT NULL,
+    grade_id   UUID NOT NULL,
+    PRIMARY KEY (request_id, grade_id),
+    FOREIGN KEY (request_id) REFERENCES interview_request (id),
+    FOREIGN KEY (grade_id) REFERENCES grade (id)
+);
+
+-- Связующая таблица для заявок и навыков
+CREATE TABLE IF NOT EXISTS interview_request_skill
+(
+    request_id UUID NOT NULL,
+    skill_id   UUID NOT NULL,
+    PRIMARY KEY (request_id, skill_id),
+    FOREIGN KEY (request_id) REFERENCES interview_request (id),
+    FOREIGN KEY (skill_id) REFERENCES skill (id)
+);
+
+-- Связующая таблица для заявок и слотов
+CREATE TABLE IF NOT EXISTS interview_request_slot
+(
+    request_id UUID NOT NULL,
+    slot_id    UUID NOT NULL,
+    PRIMARY KEY (request_id, slot_id),
+    FOREIGN KEY (request_id) REFERENCES interview_request (id),
+    FOREIGN KEY (slot_id) REFERENCES interview_slot (id)
 );

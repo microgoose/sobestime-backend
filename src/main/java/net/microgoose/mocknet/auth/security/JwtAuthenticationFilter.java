@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.config.AuthentificationConfig;
+import net.microgoose.mocknet.auth.config.TokenConfig;
 import net.microgoose.mocknet.auth.dto.AuthTokensDto;
 import net.microgoose.mocknet.auth.service.AuthService;
 import net.microgoose.mocknet.auth.service.JwtService;
@@ -32,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthService authService;
     private final TokenCookieService tokenCookieService;
     private final AuthentificationConfig authConfig;
+    private final TokenConfig tokenConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -60,6 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (email != null) {
                 setupAuthentication(request, accessToken, email);
             }
+
+            response.addHeader(tokenConfig.getAccessTokenResponseHeader(), accessToken);
         }
 
         filterChain.doFilter(request, response);
@@ -108,7 +112,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extractRefreshToken(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if (authConfig.getRefreshTokenName().equals(cookie.getName())) {
+                if (tokenConfig.getRefreshTokenName().equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }

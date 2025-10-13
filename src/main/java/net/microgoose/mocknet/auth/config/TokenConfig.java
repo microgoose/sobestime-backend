@@ -16,6 +16,15 @@ public class TokenConfig {
     @Value("${app.auth.access-token-expiration}")
     private Duration accessTokenExpiration;
 
+    @Value("${app.auth.access-token-name}")
+    private String accessTokenName;
+
+    @Value("${app.auth.access-token-response-header}")
+    private String accessTokenResponseHeader;
+
+    @Value("${app.auth.refresh-token-name}")
+    private String refreshTokenName;
+
     @Value("${app.auth.refresh-token-expiration}")
     private Duration refreshTokenExpiration;
 

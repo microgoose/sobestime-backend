@@ -1,20 +1,27 @@
 package net.microgoose.mocknet.interview.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.app.exception.IllegalActionException;
 import net.microgoose.mocknet.app.exception.NotFoundException;
 import net.microgoose.mocknet.app.exception.ValidationException;
-import net.microgoose.mocknet.interview.dto.CreateInterviewSlotRequest;
+import net.microgoose.mocknet.interview.dto.BookInterviewSlotRequest;
+import net.microgoose.mocknet.interview.dto.InterviewSlotDto;
 import net.microgoose.mocknet.interview.mapper.InterviewSlotMapper;
+import net.microgoose.mocknet.interview.model.ConfirmationStatus;
+import net.microgoose.mocknet.interview.model.InterviewRequest;
 import net.microgoose.mocknet.interview.model.InterviewSlot;
+import net.microgoose.mocknet.interview.model.InterviewUser;
 import net.microgoose.mocknet.interview.repository.InterviewSlotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
+
+import static net.microgoose.mocknet.interview.config.ErrorDictionary.SLOT_ALREADY_TAKEN;
+import static net.microgoose.mocknet.interview.config.ErrorDictionary.SLOT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -22,43 +29,31 @@ public class InterviewSlotService {
 
     private final InterviewSlotRepository repository;
     private final InterviewSlotMapper mapper;
-    private final InterviewRequestService interviewRequestService;
+    private final EntityManager em;
 
-    public List<InterviewSlot> getAllSlots() {
-        return repository.findAll();
-    }
-
-    public InterviewSlot getSlotById(UUID id) {
-        return repository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Слот для интервью не найден: " + id));
-    }
-
-    @Transactional
-    public InterviewSlot createSlot(CreateInterviewSlotRequest request) {
-        if (!interviewRequestService.existById(request.getInterviewRequestId()))
-            throw new ValidationException("Запрос на интервью не существует");
-
-        if (request.getEndTime().isBefore(OffsetDateTime.now()))
-            throw new ValidationException("Время окончания не может быть раньше текущего времени");
-        if (request.getStartTime().isEqual(request.getEndTime()))
-            throw new ValidationException("Время начала не может совпадать с временем окончания");
-        if (request.getStartTime().isAfter(request.getEndTime()))
-            throw new ValidationException("Время начала не может быть позже времени окончания");
-
-        return repository.save(mapper.fromDto(request));
+    public InterviewSlotDto save(InterviewRequest request, OffsetDateTime startTime) {
+        return mapper.toDto(repository.save(InterviewSlot.builder()
+            .request(request)
+            .status(ConfirmationStatus.PENDING)
+            .startTime(startTime.toInstant())
+            .bookers(new HashSet<>())
+            .build()));
     }
 
     @Transactional
-    public InterviewSlot bookSlot(UUID interviewerId, UUID slotId) {
-        InterviewSlot slot = getSlotById(slotId);
-        UUID creatorId = slot.getInterviewRequest().getCreatorId();
+    public InterviewSlotDto bookSlot(UUID userId, BookInterviewSlotRequest request) {
+        InterviewSlot slot = repository.findById(request.getSlotUuid())
+            .orElseThrow(() -> new NotFoundException(SLOT_NOT_FOUND));
 
-        if (Objects.equals(interviewerId, creatorId))
-            throw new ValidationException("Нельзя забронировать свой же слот");
-        if (slot.getIsBooked())
-            throw new IllegalActionException("Слот уже забронирован: " + slotId);
+        boolean isAlreadyTaken = slot.getBookers().stream()
+            .anyMatch(iu -> Objects.equals(userId, iu.getId()));
 
-        slot.setIsBooked(true);
-        return repository.save(slot);
+        if (isAlreadyTaken && ConfirmationStatus.CONFIRMED.equals(slot.getStatus()))
+            throw new ValidationException(SLOT_ALREADY_TAKEN);
+
+        slot.getBookers().add(em.getReference(InterviewUser.class, userId));
+
+        return mapper.toDto(slot);
     }
+
 }

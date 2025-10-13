@@ -1,8 +1,10 @@
 package net.microgoose.mocknet.interview.model;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -13,16 +15,26 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "interview_slot")
 public class InterviewSlot {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    private InterviewRequest interviewRequest;
+    @Enumerated(EnumType.STRING)
+    private ConfirmationStatus status = ConfirmationStatus.PENDING;
 
     private Instant startTime;
 
-    private Instant endTime;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    private InterviewRequest request;
 
-    private Boolean isBooked;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "interview_slot_booker",
+        joinColumns = @JoinColumn(name = "slot_id"),
+        inverseJoinColumns = @JoinColumn(name = "booker_id")
+    )
+    private Set<InterviewUser> bookers;
+
 }

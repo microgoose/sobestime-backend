@@ -1,39 +1,33 @@
 package net.microgoose.mocknet.interview.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.microgoose.mocknet.app.config.RequestSender;
+import net.microgoose.mocknet.auth.model.UserPrincipal;
 import net.microgoose.mocknet.interview.dto.CreateInterviewRequest;
 import net.microgoose.mocknet.interview.dto.InterviewRequestDto;
-import net.microgoose.mocknet.interview.mapper.InterviewRequestMapper;
 import net.microgoose.mocknet.interview.service.InterviewRequestService;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/interview-requests")
 @RequiredArgsConstructor
 public class InterviewRequestController {
 
-    private final InterviewRequestService service;
-    private final InterviewRequestMapper mapper;
+    private final InterviewRequestService interviewRequestService;
 
     @GetMapping
-    public List<InterviewRequestDto> getAllRequests() {
-        return mapper.toDto(service.getAllRequests());
+    public Page<InterviewRequestDto> getInterviewRequests(@PageableDefault(size = 20) Pageable pageable) {
+        return interviewRequestService.findAll(pageable);
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public InterviewRequestDto createRequest(@RequestAttribute("X-User-Id") UUID userId,
-                                             @RequestBody CreateInterviewRequest request) {
+    public InterviewRequestDto createInterviewRequests(@RequestSender UserPrincipal user,
+                                                       @RequestBody @Valid CreateInterviewRequest request) {
 
-        return mapper.toDto(service.createRequest(userId, request));
-    }
-
-    @GetMapping("/{id}")
-    public InterviewRequestDto getRequest(@PathVariable UUID id) {
-        return mapper.toDto(service.getRequestById(id));
+        return interviewRequestService.saveRequest(user.getId(), request);
     }
 }

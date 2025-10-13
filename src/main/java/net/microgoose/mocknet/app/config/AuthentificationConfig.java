@@ -14,11 +14,5 @@ public class AuthentificationConfig {
     @Value("${app.auth.header-prefix}")
     private String headerPrefix;
 
-    @Value("${app.auth.access-token-name}")
-    private String accessTokenName;
-
-    @Value("${app.auth.refresh-token-name}")
-    private String refreshTokenName;
-
 }
 

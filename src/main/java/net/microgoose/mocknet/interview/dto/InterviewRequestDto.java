@@ -1,20 +1,19 @@
 package net.microgoose.mocknet.interview.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
-import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Builder
 public class InterviewRequestDto {
-    private UUID id;
-    private UUID creatorId;
-    private UUID programmingLanguageId;
-    private String title;
+    private UUID uuid;
     private String description;
-    private OffsetDateTime createdAt;
+    private InterviewUserDto user;
+    private InterviewRoleDto role;
+    private Set<GradeDto> gradeUuids;
+    private Set<SkillDto> skillUuids;
+    private Set<InterviewSlotDto> slots;
 }

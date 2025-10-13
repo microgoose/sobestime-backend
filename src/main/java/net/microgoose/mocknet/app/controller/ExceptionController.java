@@ -9,6 +9,7 @@ import net.microgoose.mocknet.app.exception.NotFoundException;
 import net.microgoose.mocknet.app.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,6 +26,15 @@ public class ExceptionController {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleValidationError(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, ErrorResponse.builder()
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message("Некорректный запрос")
+            .timestamp(OffsetDateTime.now())
+            .build());
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleNotFoundError(NotFoundException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
     }
@@ -38,7 +48,7 @@ public class ExceptionController {
     public ResponseEntity<ErrorResponse> handleUnknownError(Exception ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, ErrorResponse.builder()
             .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-            .message("Внутреняя ошибка сервера")
+            .message("Внутренняя ошибка сервера")
             .timestamp(OffsetDateTime.now())
             .build());
     }

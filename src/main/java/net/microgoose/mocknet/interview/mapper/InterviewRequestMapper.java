@@ -1,45 +1,35 @@
 package net.microgoose.mocknet.interview.mapper;
 
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.app.config.DateTimeService;
-import net.microgoose.mocknet.interview.dto.CreateInterviewRequest;
 import net.microgoose.mocknet.interview.dto.InterviewRequestDto;
 import net.microgoose.mocknet.interview.model.InterviewRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class InterviewRequestMapper {
 
-    private final ProgrammingLanguageMapper programmingLanguageMapper;
-    private final DateTimeService dateTimeService;
-
-    public InterviewRequest fromDto(UUID creatorId, CreateInterviewRequest request) {
-        return InterviewRequest.builder()
-            .title(request.getTitle())
-            .description(request.getDescription())
-            .creatorId(creatorId)
-            .programmingLanguage(programmingLanguageMapper.map(request.getProgrammingLanguageId()))
-            .createdAt(Instant.now())
-            .build();
-    }
+    private final InterviewSlotMapper interviewSlotMapper;
+    private final InterviewRoleMapper interviewRoleMapper;
+    private final InterviewUserMapper interviewUserMapper;
+    private final SkillMapper skillMapper;
+    private final GradeMapper gradeMapper;
 
     public InterviewRequestDto toDto(InterviewRequest request) {
         return InterviewRequestDto.builder()
-            .id(request.getId())
-            .title(request.getTitle())
+            .uuid(request.getId())
             .description(request.getDescription())
-            .programmingLanguageId(request.getProgrammingLanguage().getId())
-            .creatorId(request.getCreatorId())
-            .createdAt(dateTimeService.toOffsetDateTime(request.getCreatedAt()))
+            .user(interviewUserMapper.toDto(request.getCreator()))
+            .role(interviewRoleMapper.toDto(request.getRole()))
+            .skillUuids(skillMapper.toDto(request.getSkills()))
+            .gradeUuids(gradeMapper.toDto(request.getGrades()))
+            .slots(interviewSlotMapper.toDto(request.getSlots()))
             .build();
     }
 
-    public List<InterviewRequestDto> toDto(List<InterviewRequest> request) {
-        return request.stream().map(this::toDto).toList();
+    public Page<InterviewRequestDto> toDto(Page<InterviewRequest> items) {
+        return items.map(this::toDto);
     }
+
 }

@@ -1,5 +1,6 @@
 package net.microgoose.mocknet.auth.security;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.model.UserPrincipal;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Getter
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 

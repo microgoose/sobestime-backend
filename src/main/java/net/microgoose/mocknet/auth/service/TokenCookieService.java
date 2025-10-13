@@ -1,7 +1,6 @@
 package net.microgoose.mocknet.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.app.config.AuthentificationConfig;
 import net.microgoose.mocknet.auth.config.TokenConfig;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
@@ -11,10 +10,9 @@ import org.springframework.stereotype.Service;
 public class TokenCookieService {
 
     private final TokenConfig tokenConfig;
-    private final AuthentificationConfig authConfig;
 
     public ResponseCookie createRefreshTokenCookie(String refreshToken) {
-        return ResponseCookie.from(authConfig.getRefreshTokenName(), refreshToken)
+        return ResponseCookie.from(tokenConfig.getRefreshTokenName(), refreshToken)
             .httpOnly(true)
             .secure(tokenConfig.isSecure())
             .path(tokenConfig.getRefreshTokenPath())
@@ -24,7 +22,7 @@ public class TokenCookieService {
     }
 
     public ResponseCookie createDeleteRefreshTokenCookie(String refreshToken) {
-        return ResponseCookie.from(authConfig.getRefreshTokenName(), refreshToken)
+        return ResponseCookie.from(tokenConfig.getRefreshTokenName(), refreshToken)
             .httpOnly(true)
             .secure(tokenConfig.isSecure())
             .path(tokenConfig.getRefreshTokenPath())
