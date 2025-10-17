@@ -45,7 +45,7 @@ public class UserPrincipalService {
         userPrincipal = repository.save(userPrincipal);
         userTopic.sendUserRegisterEvent(UserRegisterEvent.builder()
             .id(userPrincipal.getId())
-            .email(userPrincipal.getEmail())
+            .username(userPrincipal.getUsername())
             .build());
 
         return userPrincipal;
