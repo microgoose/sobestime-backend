@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Деплой
 
 on:
   push:
@@ -9,15 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Проверка кода
         uses: actions/checkout@v4
 
-      - name: Deploy to server
+      - name: Деплой на сервер
         uses: D3rHase/ssh-command-action@v0.2.2
         with:
           host: ${{secrets.SSH_HOST}}
           user: ${{secrets.SSH_USER}}
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
-          script: |
-            cd /home/deploy/mocknet
-            ./deploy.sh
+          command: /home/${{secrets.SSH_USER}}/deploy.sh
