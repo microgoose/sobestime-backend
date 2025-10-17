@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - mocknet_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   mocknet:
     container_name: mocknet
@@ -26,6 +27,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: mocknet
     depends_on:
       - mocknet-db
+    restart: unless-stopped
 
 volumes:
   mocknet_data:
