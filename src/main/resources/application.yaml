@@ -16,11 +16,21 @@ app:
 spring:
   application:
     name: mocknet
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     url: jdbc:postgresql://localhost:5432/mocknet-db
     username: mocknet
     password: mocknet
     driver-class-name: org.postgresql.Driver
-  sql:
-    init:
-      mode: always
+  flyway:
+    enabled: true
+    clean-disabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    baseline-on-migrate: true
+    out-of-order: false
