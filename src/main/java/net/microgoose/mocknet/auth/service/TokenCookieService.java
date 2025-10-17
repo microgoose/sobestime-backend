@@ -26,7 +26,7 @@ public class TokenCookieService {
             .httpOnly(true)
             .secure(tokenConfig.isSecure())
             .path(tokenConfig.getRefreshTokenPath())
-            .maxAge(tokenConfig.getRefreshTokenExpiration().getSeconds())
+            .maxAge(0)
             .sameSite(tokenConfig.getSameSite())
             .build();
     }
