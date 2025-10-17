@@ -21,7 +21,7 @@ public class TokenCookieService {
             .build();
     }
 
-    public ResponseCookie createDeleteRefreshTokenCookie(String refreshToken) {
+    public ResponseCookie createExpiredRefreshTokenCookie(String refreshToken) {
         return ResponseCookie.from(tokenConfig.getRefreshTokenName(), refreshToken)
             .httpOnly(true)
             .secure(tokenConfig.isSecure())

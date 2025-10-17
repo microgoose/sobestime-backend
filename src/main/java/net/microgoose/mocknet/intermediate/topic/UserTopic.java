@@ -11,7 +11,7 @@ public class UserTopic {
 
     private final InterviewUserService interviewUserService;
 
-    public void onUserRegister(UserRegisterEvent event) {
+    public void sendUserRegisterEvent(UserRegisterEvent event) {
         interviewUserService.saveUser(event);
     }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import net.microgoose.mocknet.interview.config.ErrorDictionary;
+import net.microgoose.mocknet.interview.config.MessageDictionary;
 
 import java.util.UUID;
 
@@ -12,12 +12,12 @@ import java.util.UUID;
 @Builder
 public class CreateInterviewUserRequest {
 
-    @NotNull(message = ErrorDictionary.USER_ID_NOT_SPECIFIED)
+    @NotNull(message = MessageDictionary.USER_ID_NOT_SPECIFIED)
     private UUID uuid;
 
-    @NotBlank(message = ErrorDictionary.USERNAME_NOT_SPECIFIED)
+    @NotBlank(message = MessageDictionary.USERNAME_NOT_SPECIFIED)
     private String username;
 
-    @NotBlank(message = ErrorDictionary.AVATAR_URL_NOT_SPECIFIED)
+    @NotBlank(message = MessageDictionary.AVATAR_URL_NOT_SPECIFIED)
     private String avatarUrl;
 }

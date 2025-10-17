@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = extractRefreshToken(request);
 
         if (refreshToken == null || !jwtService.isValid(refreshToken)) {
-            ResponseCookie responseCookie = tokenCookieService.createDeleteRefreshTokenCookie(refreshToken);
+            ResponseCookie responseCookie = tokenCookieService.createExpiredRefreshTokenCookie(refreshToken);
             response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
             return null;

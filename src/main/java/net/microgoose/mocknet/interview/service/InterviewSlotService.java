@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
-import static net.microgoose.mocknet.interview.config.ErrorDictionary.SLOT_ALREADY_TAKEN;
-import static net.microgoose.mocknet.interview.config.ErrorDictionary.SLOT_NOT_FOUND;
+import static net.microgoose.mocknet.interview.config.MessageDictionary.SLOT_ALREADY_TAKEN;
+import static net.microgoose.mocknet.interview.config.MessageDictionary.SLOT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

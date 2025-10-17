@@ -1,7 +1,5 @@
 package net.microgoose.mocknet.auth.security;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.model.UserPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,11 +9,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Getter
-@RequiredArgsConstructor
-public class UserDetailsImpl implements UserDetails {
-
-    private final UserPrincipal userPrincipal;
+public record UserDetailsImpl(UserPrincipal userPrincipal) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -35,6 +29,10 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
+        return userPrincipal.getUsername();
+    }
+
+    public String getEmail() {
         return userPrincipal.getEmail();
     }
 

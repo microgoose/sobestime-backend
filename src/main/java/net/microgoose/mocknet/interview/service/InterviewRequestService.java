@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static net.microgoose.mocknet.interview.config.ErrorDictionary.*;
+import static net.microgoose.mocknet.interview.config.MessageDictionary.*;
 
 @Service
 @RequiredArgsConstructor

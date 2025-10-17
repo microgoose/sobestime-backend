@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static net.microgoose.mocknet.interview.config.ErrorDictionary.GRADE_ALREADY_EXIST;
+import static net.microgoose.mocknet.interview.config.MessageDictionary.GRADE_ALREADY_EXIST;
 
 @Service
 @RequiredArgsConstructor

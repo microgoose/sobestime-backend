@@ -1,9 +1,10 @@
 package net.microgoose.mocknet.auth.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.auth.dto.AuthRequest;
 import net.microgoose.mocknet.auth.dto.AuthResponse;
 import net.microgoose.mocknet.auth.dto.AuthTokensDto;
+import net.microgoose.mocknet.auth.dto.LoginRequest;
+import net.microgoose.mocknet.auth.dto.RegistrationRequest;
 import net.microgoose.mocknet.auth.service.AuthService;
 import net.microgoose.mocknet.auth.service.TokenCookieService;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +29,7 @@ public class AuthController {
     // TODO disable/ban user
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthTokensDto tokenDto = authService.login(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 
@@ -42,7 +43,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody RegistrationRequest request) {
         AuthTokensDto tokenDto = authService.register(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 

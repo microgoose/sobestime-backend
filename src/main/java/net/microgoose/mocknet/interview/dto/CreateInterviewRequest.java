@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import net.microgoose.mocknet.interview.config.ErrorDictionary;
+import net.microgoose.mocknet.interview.config.MessageDictionary;
 
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -16,15 +16,15 @@ public class CreateInterviewRequest {
 
     private String description;
 
-    @NotNull(message = ErrorDictionary.ROLE_NOT_SPECIFIED)
+    @NotNull(message = MessageDictionary.ROLE_NOT_SPECIFIED)
     private UUID roleUuid;
 
-    @NotEmpty(message = ErrorDictionary.GRADES_NOT_SPECIFIED)
+    @NotEmpty(message = MessageDictionary.GRADES_NOT_SPECIFIED)
     private Set<UUID> gradeUuids;
 
-    @NotEmpty(message = ErrorDictionary.SKILLS_NOT_SPECIFIED)
+    @NotEmpty(message = MessageDictionary.SKILLS_NOT_SPECIFIED)
     private Set<UUID> skillUuids;
 
-    @NotEmpty(message = ErrorDictionary.SLOTS_NOT_SPECIFIED)
+    @NotEmpty(message = MessageDictionary.SLOTS_NOT_SPECIFIED)
     private Set<OffsetDateTime> slots;
 }
