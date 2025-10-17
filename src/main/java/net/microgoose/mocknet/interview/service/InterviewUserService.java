@@ -18,7 +18,7 @@ public class InterviewUserService {
         return repository.save(InterviewUser.builder()
             .id(userEvent.getId())
             .avatarUrl("https://cdn.sobeshelp.ru/avatars/45.png")
-            .username(userEvent.getEmail())
+            .username(userEvent.getUsername())
             .build());
     }
 
