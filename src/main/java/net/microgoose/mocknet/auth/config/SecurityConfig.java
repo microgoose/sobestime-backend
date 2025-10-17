@@ -29,7 +29,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Auth Service
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").anonymous() // TODO можно авторизоваться уже авторизованному
-                .requestMatchers("/api/v1/role").hasRole("ADMIN")
+                .requestMatchers("/api/v1/roles").hasRole("ADMIN")
 
                 // Interview Service
                 .requestMatchers(HttpMethod.POST, "/api/v1/grades").hasRole("ADMIN")

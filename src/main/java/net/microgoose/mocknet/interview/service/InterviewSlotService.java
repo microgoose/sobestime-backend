@@ -32,6 +32,7 @@ public class InterviewSlotService {
     private final EntityManager em;
 
     public InterviewSlotDto save(InterviewRequest request, OffsetDateTime startTime) {
+        // TODO intersects slots with same request
         return mapper.toDto(repository.save(InterviewSlot.builder()
             .request(request)
             .status(ConfirmationStatus.PENDING)

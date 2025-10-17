@@ -22,6 +22,7 @@ public class AuthService {
 
     public AuthTokensDto register(RegistrationRequest request) {
         // TODO Send verification email
+        // TODO password strength
         UserPrincipal userPrincipal = userPrincipalService.createUser(request);
         return jwtService.generateTokenPair(userPrincipal);
     }
