@@ -30,8 +30,9 @@ public class SecurityConfig {
             .authenticationProvider(jwtAuthenticationProvider)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
+                // TODO make configurable
                 // Auth Service
-                .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").anonymous() // TODO можно авторизоваться уже авторизованному
+                .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").anonymous()
                 .requestMatchers("/api/v1/roles").hasRole("ADMIN")
 
                 // Interview Service

@@ -36,7 +36,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                 refreshToken = authTokensDto.getRefreshToken();
             }
 
-            if (!jwtService.isValid(accessToken)) {
+            if (jwtService.isValid(accessToken)) {
                 String email = jwtService.getEmailFromToken(accessToken);
 
                 if (email != null) {

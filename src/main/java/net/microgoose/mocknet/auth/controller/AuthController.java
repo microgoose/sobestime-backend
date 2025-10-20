@@ -1,5 +1,6 @@
 package net.microgoose.mocknet.auth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.dto.AuthResponse;
 import net.microgoose.mocknet.auth.dto.AuthTokensDto;
@@ -35,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
         AuthTokensDto tokenDto = authService.login(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 
@@ -49,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegistrationRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegistrationRequest request) {
         AuthTokensDto tokenDto = authService.register(request);
         ResponseCookie cookie = tokenCookieService.createRefreshTokenCookie(tokenDto.getRefreshToken());
 

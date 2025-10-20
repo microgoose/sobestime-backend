@@ -16,7 +16,6 @@ public class JwtAuthenticationToken extends UsernamePasswordAuthenticationToken 
         super(null, null);
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        setAuthenticated(false);
     }
 
     public JwtAuthenticationToken(UserDetails principal, String accessToken,
@@ -24,6 +23,5 @@ public class JwtAuthenticationToken extends UsernamePasswordAuthenticationToken 
         super(principal, null, authorities);
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        setAuthenticated(true);
     }
 }
