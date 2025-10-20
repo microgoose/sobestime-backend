@@ -21,6 +21,10 @@ public class UserPrincipalMapper {
             .username(request.getUsername())
             .password(passwordEncoder.encode(request.getPassword()))
             .roles(new HashSet<>())
+            .enabled(false)
+            .credentialsNonExpired(true)
+            .accountNonLocked(true)
+            .accountNonExpired(true)
             .createdAt(Instant.now())
             .updatedAt(Instant.now())
             .build();

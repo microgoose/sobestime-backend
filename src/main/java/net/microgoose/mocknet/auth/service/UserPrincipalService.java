@@ -38,6 +38,7 @@ public class UserPrincipalService {
             throw new ValidationException(EMAIL_ALREADY_EXIST);
 
         UserPrincipal userPrincipal = mapper.fromDto(request);
+        userPrincipal.setEnabled(true);
 
         Role userRole = roleService.findByName("ROLE_USER");
         userPrincipal.getRoles().add(userRole);

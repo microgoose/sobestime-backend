@@ -21,7 +21,7 @@ public class InterviewSlot {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    private ConfirmationStatus status = ConfirmationStatus.PENDING;
+    private ConfirmationStatus status;
 
     private Instant startTime;
 

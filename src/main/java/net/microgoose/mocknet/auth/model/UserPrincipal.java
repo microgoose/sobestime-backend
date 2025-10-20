@@ -29,16 +29,16 @@ public class UserPrincipal {
     @Column(nullable = false)
     private String password;
 
-    private boolean enabled = true;
+    private boolean enabled;
 
     @Column(name = "account_non_expired")
-    private boolean accountNonExpired = true;
+    private boolean accountNonExpired;
 
     @Column(name = "account_non_locked")
-    private boolean accountNonLocked = true;
+    private boolean accountNonLocked;
 
     @Column(name = "credentials_non_expired")
-    private boolean credentialsNonExpired = true;
+    private boolean credentialsNonExpired;
 
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;

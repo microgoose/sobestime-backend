@@ -3,7 +3,6 @@ package net.microgoose.mocknet.auth.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,6 +25,6 @@ public class Role {
     private String description;
     
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private Set<UserPrincipal> users = new HashSet<>();
+    private Set<UserPrincipal> users;
 
 }
