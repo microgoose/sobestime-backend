@@ -21,8 +21,8 @@ public class TokenCookieService {
             .build();
     }
 
-    public ResponseCookie createExpiredRefreshTokenCookie(String refreshToken) {
-        return ResponseCookie.from(tokenConfig.getRefreshTokenName(), refreshToken)
+    public ResponseCookie createExpiredRefreshTokenCookie() {
+        return ResponseCookie.from(tokenConfig.getRefreshTokenName(), "")
             .httpOnly(true)
             .secure(tokenConfig.isSecure())
             .path(tokenConfig.getRefreshTokenPath())

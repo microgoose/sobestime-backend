@@ -4,6 +4,7 @@ public class MessageDictionary {
     public static final String AUTH_FAILED = "Не удалось аутентифицировать пользователя";
     public static final String USER_NOT_FOUND = "Пользователь не найден";
     public static final String INCORRECT_AUTH_DATA = "Неверная электронная почта или пароль";
+    public static final String INCORRECT_JWT_DATA = "Некорректные данные сессии";
     public static final String EMAIL_NOT_SPECIFIED = "Не указана электронная почта";
     public static final String EMAIL_ALREADY_EXIST = "Электронная почта уже зарегистрирована";
     public static final String USERNAME_NOT_SPECIFIED = "Не указано имя пользователя";

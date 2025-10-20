@@ -8,17 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.config.AuthentificationConfig;
 import net.microgoose.mocknet.auth.config.TokenConfig;
-import net.microgoose.mocknet.auth.dto.AuthTokensDto;
-import net.microgoose.mocknet.auth.service.AuthService;
-import net.microgoose.mocknet.auth.service.JwtService;
 import net.microgoose.mocknet.auth.service.TokenCookieService;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,12 +21,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
-    private final AuthService authService;
     private final TokenCookieService tokenCookieService;
     private final AuthentificationConfig authConfig;
     private final TokenConfig tokenConfig;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -46,57 +37,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String accessToken = extractAccessToken(request);
+        String refreshToken = extractRefreshToken(request);
 
         if (accessToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (jwtService.isExpired(accessToken)) {
-            accessToken = refreshTokens(request, response);
-        }
+        JwtAuthenticationToken authentication = (JwtAuthenticationToken)
+            authenticationManager.authenticate(new JwtAuthenticationToken(accessToken, refreshToken));
 
-        if (jwtService.isValid(accessToken)) {
-            String email = jwtService.getEmailFromToken(accessToken);
+        if (authentication.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            if (email != null) {
-                setupAuthentication(request, accessToken, email);
-            }
-
-            response.addHeader(tokenConfig.getAccessTokenResponseHeader(), accessToken);
+            response.addHeader(tokenConfig.getAccessTokenResponseHeader(), authentication.getAccessToken());
+            response.addHeader(HttpHeaders.SET_COOKIE, tokenCookieService
+                .createRefreshTokenCookie(authentication.getRefreshToken())
+                .toString());
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String refreshTokens(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = extractRefreshToken(request);
-
-        if (refreshToken == null || !jwtService.isValid(refreshToken)) {
-            ResponseCookie responseCookie = tokenCookieService.createExpiredRefreshTokenCookie(refreshToken);
-            response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
-
-            return null;
-        }
-
-        AuthTokensDto tokensDto = authService.login(refreshToken);
-        String accessTokenHeader = String.format("%s %s", authConfig.getHeaderPrefix(), tokensDto.getAccessToken());
-        String refreshTokenCookie = tokenCookieService
-            .createRefreshTokenCookie(tokensDto.getRefreshToken())
-            .toString();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie);
-        response.addHeader(authConfig.getHeaderName(), accessTokenHeader);
-
-        return tokensDto.getAccessToken();
-    }
-
-    private void setupAuthentication(HttpServletRequest request, String accessToken, String email) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(userDetails, accessToken, userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
     private String extractAccessToken(HttpServletRequest request) {

@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import static net.microgoose.mocknet.auth.config.MessageDictionary.USER_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class DbUserDetailsService implements UserDetailsService {
@@ -19,7 +21,7 @@ public class DbUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserPrincipal userPrincipal = repository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException(email));
+            .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
         userPrincipal.setRoles(roleRepository.findByUsersContains(userPrincipal));
         return new UserDetailsImpl(userPrincipal);
     }
