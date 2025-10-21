@@ -19,9 +19,4 @@ public class UserDetailsConfig {
         return userPrincipalService;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
-
 }
