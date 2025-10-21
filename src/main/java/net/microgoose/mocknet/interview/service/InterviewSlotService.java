@@ -15,6 +15,7 @@ import net.microgoose.mocknet.interview.repository.InterviewSlotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -31,14 +32,20 @@ public class InterviewSlotService {
     private final InterviewSlotMapper mapper;
     private final EntityManager em;
 
-    public InterviewSlotDto save(InterviewRequest request, OffsetDateTime startTime) {
-        // TODO intersects slots with same request
+    public InterviewSlotDto save(InterviewRequest request, Instant startTime) {
+        if (repository.existsByRequestAndStartTime(request, startTime))
+            throw new ValidationException(SLOT_ALREADY_TAKEN);
+
         return mapper.toDto(repository.save(InterviewSlot.builder()
             .request(request)
             .status(ConfirmationStatus.PENDING)
-            .startTime(startTime.toInstant())
+            .startTime(startTime)
             .bookers(new HashSet<>())
             .build()));
+    }
+
+    public InterviewSlotDto save(InterviewRequest request, OffsetDateTime startTime) {
+        return save(request, startTime.toInstant());
     }
 
     @Transactional
