@@ -35,6 +35,8 @@ public class InterviewRequestService {
 
     private final InterviewRequestMapper mapper;
 
+    // TODO Serializing PageImpl instances as-is is not supported,
+    //  meaning that there is no guarantee about the stability of the resulting JSON structure!
     public Page<InterviewRequestDto> findAll(Pageable pageable) {
         return mapper.toDto(repository.findAll(pageable));
     }
