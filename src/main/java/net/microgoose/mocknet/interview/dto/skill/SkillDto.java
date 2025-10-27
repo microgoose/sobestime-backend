@@ -1,4 +1,4 @@
-package net.microgoose.mocknet.interview.dto;
+package net.microgoose.mocknet.interview.dto.skill;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class InterviewRoleDto {
+public class SkillDto {
     private UUID uuid;
     private String name;
 }

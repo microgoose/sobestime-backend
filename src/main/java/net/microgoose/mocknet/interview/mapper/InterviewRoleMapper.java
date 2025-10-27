@@ -1,7 +1,7 @@
 package net.microgoose.mocknet.interview.mapper;
 
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.interview.dto.InterviewRoleDto;
+import net.microgoose.mocknet.interview.dto.interview_role.InterviewRoleDto;
 import net.microgoose.mocknet.interview.model.InterviewRole;
 import org.springframework.stereotype.Component;
 

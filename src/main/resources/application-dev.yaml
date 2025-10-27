@@ -3,3 +3,9 @@ app:
     jwt-secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5971
     secure: false
     same-site: 'None'
+
+spring:
+  datasource:
+    url: jdbc:postgresql://90.156.158.101:5432/mocknet-db
+    username: mocknet
+    password: mocknet

@@ -19,7 +19,12 @@ public class InterviewRequest {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String title;
+
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private InterviewRequestStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")

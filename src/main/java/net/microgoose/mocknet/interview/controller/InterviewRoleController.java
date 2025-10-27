@@ -2,7 +2,7 @@ package net.microgoose.mocknet.interview.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.interview.dto.CreateInterviewRoleRequest;
+import net.microgoose.mocknet.interview.dto.interview_role.CreateInterviewRoleRequest;
 import net.microgoose.mocknet.interview.model.InterviewRole;
 import net.microgoose.mocknet.interview.service.InterviewRoleService;
 import org.springframework.web.bind.annotation.*;

@@ -2,9 +2,8 @@ package net.microgoose.mocknet.interview.service;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.ValidationException;
-import net.microgoose.mocknet.interview.dto.CreateInterviewRequest;
-import net.microgoose.mocknet.interview.dto.InterviewRequestDto;
-import net.microgoose.mocknet.interview.dto.InterviewSlotDto;
+import net.microgoose.mocknet.interview.dto.interview_request.CreateInterviewRequest;
+import net.microgoose.mocknet.interview.dto.interview_request.InterviewRequestDto;
 import net.microgoose.mocknet.interview.mapper.InterviewRequestMapper;
 import net.microgoose.mocknet.interview.model.*;
 import net.microgoose.mocknet.interview.repository.*;
@@ -15,9 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static net.microgoose.mocknet.interview.config.MessageDictionary.*;
 
@@ -30,8 +27,6 @@ public class InterviewRequestService {
     private final InterviewRoleRepository roleRepository;
     private final GradeRepository gradeRepository;
     private final SkillRepository skillRepository;
-
-    private final InterviewSlotService slotService;
 
     private final InterviewRequestMapper mapper;
 
@@ -61,7 +56,9 @@ public class InterviewRequestService {
         // TODO  Валидировать описание: проверить на запрещённые символы
 
         InterviewRequest interviewRequest = repository.save(InterviewRequest.builder()
+            .title(request.getTitle())
             .description(request.getDescription())
+            .status(InterviewRequestStatus.NEW)
             .creator(user)
             .role(role)
             .grades(new HashSet<>(grades))
@@ -69,14 +66,8 @@ public class InterviewRequestService {
             .slots(new HashSet<>())
             .build());
 
-        Set<InterviewSlotDto> slots = request.getSlots().stream()
-            .map(startTime  -> slotService.save(interviewRequest, startTime))
-            .collect(Collectors.toSet());
-
-        InterviewRequestDto dto = mapper.toDto(interviewRequest);
-        dto.setSlots(slots);
-
-        return dto;
+        return mapper.toDto(interviewRequest);
     }
 
+    // todo cancel request
 }

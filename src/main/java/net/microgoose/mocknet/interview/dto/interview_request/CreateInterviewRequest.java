@@ -1,4 +1,4 @@
-package net.microgoose.mocknet.interview.dto;
+package net.microgoose.mocknet.interview.dto.interview_request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import net.microgoose.mocknet.interview.config.MessageDictionary;
 
-import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 @Data
 @Builder
 public class CreateInterviewRequest {
+
+    @NotEmpty(message = MessageDictionary.TITLE_NOT_SPECIFIED)
+    private String title;
 
     private String description;
 
@@ -24,7 +26,4 @@ public class CreateInterviewRequest {
 
     @NotEmpty(message = MessageDictionary.SKILLS_NOT_SPECIFIED)
     private Set<UUID> skillUuids;
-
-    @NotEmpty(message = MessageDictionary.SLOTS_NOT_SPECIFIED)
-    private Set<OffsetDateTime> slots;
 }

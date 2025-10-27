@@ -1,4 +1,4 @@
-package net.microgoose.mocknet.interview.dto;
+package net.microgoose.mocknet.interview.dto.interview_user;
 
 import lombok.Builder;
 import lombok.Data;

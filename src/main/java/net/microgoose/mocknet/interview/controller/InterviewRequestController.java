@@ -3,11 +3,11 @@ package net.microgoose.mocknet.interview.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.config.RequestSender;
+import net.microgoose.mocknet.app.dto.PageResponse;
 import net.microgoose.mocknet.auth.model.UserPrincipal;
-import net.microgoose.mocknet.interview.dto.CreateInterviewRequest;
-import net.microgoose.mocknet.interview.dto.InterviewRequestDto;
+import net.microgoose.mocknet.interview.dto.interview_request.CreateInterviewRequest;
+import net.microgoose.mocknet.interview.dto.interview_request.InterviewRequestDto;
 import net.microgoose.mocknet.interview.service.InterviewRequestService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +20,8 @@ public class InterviewRequestController {
     private final InterviewRequestService interviewRequestService;
 
     @GetMapping
-    public Page<InterviewRequestDto> getInterviewRequests(@PageableDefault(size = 20) Pageable pageable) {
-        return interviewRequestService.findAll(pageable);
+    public PageResponse<InterviewRequestDto> getInterviewRequests(@PageableDefault(size = 20) Pageable pageable) {
+        return PageResponse.of(interviewRequestService.findAll(pageable));
     }
 
     @PostMapping

@@ -23,9 +23,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/mocknet-db
-    username: mocknet
-    password: mocknet
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true

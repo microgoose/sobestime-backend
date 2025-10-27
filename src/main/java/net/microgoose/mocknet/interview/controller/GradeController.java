@@ -2,7 +2,7 @@ package net.microgoose.mocknet.interview.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.microgoose.mocknet.interview.dto.CreateGradeRequest;
+import net.microgoose.mocknet.interview.dto.grade.CreateGradeRequest;
 import net.microgoose.mocknet.interview.model.Grade;
 import net.microgoose.mocknet.interview.service.GradeService;
 import org.springframework.web.bind.annotation.*;

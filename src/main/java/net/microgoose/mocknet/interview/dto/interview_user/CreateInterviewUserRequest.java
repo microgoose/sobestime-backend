@@ -1,4 +1,4 @@
-package net.microgoose.mocknet.interview.dto;
+package net.microgoose.mocknet.interview.dto.interview_user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

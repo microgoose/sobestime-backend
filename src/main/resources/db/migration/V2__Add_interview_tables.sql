@@ -34,9 +34,11 @@ CREATE TABLE IF NOT EXISTS grade
 CREATE TABLE IF NOT EXISTS interview_request
 (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title       VARCHAR(255) NOT NULL,
+    status      VARCHAR(100) NOT NULL,
     description TEXT,
-    creator_id  UUID NOT NULL,
-    role_id     UUID NOT NULL,
+    creator_id  UUID         NOT NULL,
+    role_id     UUID         NOT NULL,
     FOREIGN KEY (creator_id) REFERENCES interview_user (id),
     FOREIGN KEY (role_id) REFERENCES interview_role (id)
 );
@@ -48,17 +50,20 @@ CREATE TABLE IF NOT EXISTS interview_slot
     status     VARCHAR(100)             NOT NULL,
     start_time TIMESTAMP WITH TIME ZONE NOT NULL,
     request_id UUID                     NOT NULL,
-    FOREIGN KEY (request_id) REFERENCES interview_request (id)
+    booker_id  UUID                     NOT NULL,
+    FOREIGN KEY (request_id) REFERENCES interview_request (id),
+    FOREIGN KEY (booker_id) REFERENCES interview_user (id)
 );
 
--- Связующие таблицы
-CREATE TABLE IF NOT EXISTS interview_slot_booker
+CREATE TABLE IF NOT EXISTS scheduled_interview
 (
-    slot_id   UUID NOT NULL,
-    booker_id UUID NOT NULL,
-    PRIMARY KEY (slot_id, booker_id),
-    FOREIGN KEY (slot_id) REFERENCES interview_slot (id),
-    FOREIGN KEY (booker_id) REFERENCES interview_user (id)
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    status       VARCHAR(100) NOT NULL,
+    meeting_link TEXT,
+    request_id   UUID         NOT NULL,
+    slot_id      UUID         NOT NULL,
+    FOREIGN KEY (request_id) REFERENCES interview_request (id),
+    FOREIGN KEY (slot_id) REFERENCES interview_slot (id)
 );
 
 CREATE TABLE IF NOT EXISTS interview_request_grade
@@ -77,13 +82,4 @@ CREATE TABLE IF NOT EXISTS interview_request_skill
     PRIMARY KEY (request_id, skill_id),
     FOREIGN KEY (request_id) REFERENCES interview_request (id),
     FOREIGN KEY (skill_id) REFERENCES skill (id)
-);
-
-CREATE TABLE IF NOT EXISTS interview_request_slot
-(
-    request_id UUID NOT NULL,
-    slot_id    UUID NOT NULL,
-    PRIMARY KEY (request_id, slot_id),
-    FOREIGN KEY (request_id) REFERENCES interview_request (id),
-    FOREIGN KEY (slot_id) REFERENCES interview_slot (id)
 );

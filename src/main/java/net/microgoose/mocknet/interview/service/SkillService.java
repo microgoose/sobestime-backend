@@ -2,7 +2,7 @@ package net.microgoose.mocknet.interview.service;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.ValidationException;
-import net.microgoose.mocknet.interview.dto.CreateSkillRequest;
+import net.microgoose.mocknet.interview.dto.skill.CreateSkillRequest;
 import net.microgoose.mocknet.interview.model.Skill;
 import net.microgoose.mocknet.interview.repository.SkillRepository;
 import org.springframework.stereotype.Service;

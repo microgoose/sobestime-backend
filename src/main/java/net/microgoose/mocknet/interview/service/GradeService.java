@@ -2,7 +2,7 @@ package net.microgoose.mocknet.interview.service;
 
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.exception.ValidationException;
-import net.microgoose.mocknet.interview.dto.CreateGradeRequest;
+import net.microgoose.mocknet.interview.dto.grade.CreateGradeRequest;
 import net.microgoose.mocknet.interview.model.Grade;
 import net.microgoose.mocknet.interview.repository.GradeRepository;
 import org.springframework.stereotype.Service;
