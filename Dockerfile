@@ -15,6 +15,7 @@ FROM eclipse-temurin:25-jdk-alpine
 WORKDIR /app
 # Копируем собранный jar из build stage
 COPY --from=build /app/target/*.jar app.jar
+ENV SPRING_PROFILES_ACTIVE=dev
 # Порт приложения
 EXPOSE 8080
 # Команда запуска
