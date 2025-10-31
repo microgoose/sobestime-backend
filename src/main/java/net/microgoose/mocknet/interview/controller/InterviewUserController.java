@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.config.RequestSender;
 import net.microgoose.mocknet.app.dto.PageResponse;
 import net.microgoose.mocknet.auth.model.UserPrincipal;
-import net.microgoose.mocknet.interview.dto.interview_user.UserInterviewDto;
 import net.microgoose.mocknet.interview.dto.interview_user.UserInterviewRequestsDto;
-import net.microgoose.mocknet.interview.dto.interview_user.UserInterviewReservationsDto;
+import net.microgoose.mocknet.interview.dto.interview_user.UserInterviewSlotDto;
+import net.microgoose.mocknet.interview.dto.interview_user.UserScheduledInterviewDto;
 import net.microgoose.mocknet.interview.service.InterviewUserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -33,15 +33,15 @@ public class InterviewUserController {
 
     @Operation(summary = "Планируемые интервью пользователя", description = "Получить планируемые интервью пользователя постранично")
     @GetMapping("/interviews")
-    public PageResponse<UserInterviewDto> getUserInterviews(@RequestSender UserPrincipal user,
-                                                            @PageableDefault(size = 20) Pageable pageable) {
+    public PageResponse<UserScheduledInterviewDto> getUserInterviews(@RequestSender UserPrincipal user,
+                                                                     @PageableDefault(size = 20) Pageable pageable) {
         return PageResponse.of(interviewUserService.findUserInterviews(user.getId(), pageable));
     }
 
     @Operation(summary = "Слоты пользователя", description = "Получить поданные слоты пользователя постранично")
     @GetMapping("/slots")
-    public PageResponse<UserInterviewReservationsDto> getUserSlots(@RequestSender UserPrincipal user,
-                                                                   @PageableDefault(size = 20) Pageable pageable) {
+    public PageResponse<UserInterviewSlotDto> getUserSlots(@RequestSender UserPrincipal user,
+                                                           @PageableDefault(size = 20) Pageable pageable) {
         return PageResponse.of(interviewUserService.findUserSlots(user.getId(), pageable));
     }
 }

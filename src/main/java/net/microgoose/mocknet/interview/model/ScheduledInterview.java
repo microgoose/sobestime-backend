@@ -19,7 +19,7 @@ public class ScheduledInterview {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    private ConfirmationStatus status;
+    private ScheduledInterviewStatus status;
 
     private String meetingLink;
 

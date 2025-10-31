@@ -21,4 +21,8 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, UU
         "WHERE islot.request.id = :requestId")
     Page<InterviewSlot> findByRequestIdWithBooker(@Param("requestId") UUID requestId, Pageable pageable);
 
+    @Query("SELECT islot FROM InterviewSlot islot " +
+        "LEFT JOIN FETCH islot.request " +
+        "WHERE islot.booker.id = :bookerId")
+    Page<InterviewSlot> findByBooker_Id(@Param("bookerId") UUID bookerId, Pageable pageable);
 }

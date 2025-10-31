@@ -31,6 +31,7 @@ import static net.microgoose.mocknet.interview.config.MessageDictionary.*;
 @RequiredArgsConstructor
 public class InterviewSlotService {
 
+    private final ScheduledInterviewService interviewService;
     private final InterviewSlotRepository slotRepository;
     private final InterviewRequestRepository requestRepository;
     private final InterviewUserRepository userRepository;
@@ -117,6 +118,7 @@ public class InterviewSlotService {
         request.setStatus(InterviewRequestStatus.PLANNED);
         slot.setStatus(ConfirmationStatus.CONFIRMED);
 
+        interviewService.createScheduledInterview(request, slot);
         requestRepository.save(request);
         return slotMapper.toDto(slotRepository.save(slot));
     }
