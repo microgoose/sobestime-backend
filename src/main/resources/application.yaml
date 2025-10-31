@@ -16,6 +16,7 @@ app:
 spring:
   application:
     name: mocknet
+    version: @project.version@
   jpa:
     hibernate:
       ddl-auto: validate

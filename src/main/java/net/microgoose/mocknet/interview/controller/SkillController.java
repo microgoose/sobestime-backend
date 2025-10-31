@@ -1,5 +1,6 @@
 package net.microgoose.mocknet.interview.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.interview.dto.skill.CreateSkillRequest;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/skills")
 @RequiredArgsConstructor
+@Tag(name = "Скиллы")
 public class SkillController {
 
     private final SkillService skillService;

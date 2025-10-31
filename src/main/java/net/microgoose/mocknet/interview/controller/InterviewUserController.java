@@ -1,5 +1,7 @@
 package net.microgoose.mocknet.interview.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.app.config.RequestSender;
 import net.microgoose.mocknet.app.dto.PageResponse;
@@ -17,22 +19,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/interview-user")
 @RequiredArgsConstructor
+@Tag(name = "Пользователь")
 public class InterviewUserController {
 
     private final InterviewUserService interviewUserService;
 
+    @Operation(summary = "Заявки пользователя", description = "Получить заявки пользователя постранично")
     @GetMapping("/requests")
     public PageResponse<UserInterviewRequestsDto> getUserRequests(@RequestSender UserPrincipal user,
                                                           @PageableDefault(size = 20) Pageable pageable) {
         return PageResponse.of(interviewUserService.findUserRequests(user.getId(), pageable));
     }
 
+    @Operation(summary = "Планируемые интервью пользователя", description = "Получить планируемые интервью пользователя постранично")
     @GetMapping("/interviews")
     public PageResponse<UserInterviewDto> getUserInterviews(@RequestSender UserPrincipal user,
                                                             @PageableDefault(size = 20) Pageable pageable) {
         return PageResponse.of(interviewUserService.findUserInterviews(user.getId(), pageable));
     }
 
+    @Operation(summary = "Слоты пользователя", description = "Получить поданные слоты пользователя постранично")
     @GetMapping("/slots")
     public PageResponse<UserInterviewReservationsDto> getUserSlots(@RequestSender UserPrincipal user,
                                                                    @PageableDefault(size = 20) Pageable pageable) {

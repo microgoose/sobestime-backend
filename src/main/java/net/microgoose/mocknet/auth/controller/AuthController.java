@@ -1,5 +1,7 @@
 package net.microgoose.mocknet.auth.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.microgoose.mocknet.auth.dto.AuthResponse;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Авторизация")
 public class AuthController {
 
     private final AuthService authService;
@@ -28,6 +31,7 @@ public class AuthController {
     // TODO password recovery
     // TODO disable/ban user
 
+    @Operation(summary = "Выйти", description = "Выход используя куки")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout() {
         return ResponseEntity.status(HttpStatus.OK)
@@ -35,6 +39,7 @@ public class AuthController {
             .build();
     }
 
+    @Operation(summary = "Войти")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
         AuthTokensDto tokenDto = authService.login(request);
@@ -49,6 +54,7 @@ public class AuthController {
             .body(response);
     }
 
+    @Operation(summary = "Регистрация", description = "Регистрация по email/password")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegistrationRequest request) {
         AuthTokensDto tokenDto = authService.register(request);
