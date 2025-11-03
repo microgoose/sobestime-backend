@@ -1,6 +1,3 @@
--- Расширение для генерации UUID
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- Таблица пользователей
 CREATE TABLE IF NOT EXISTS interview_user
 (

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>net.microgoose</groupId>
-    <artifactId>mocknet</artifactId>
+    <groupId>net.sobestime</groupId>
+    <artifactId>sobestime-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mocknet</name>
+    <name>sobestime</name>
 
     <properties>
         <java.version>21</java.version>

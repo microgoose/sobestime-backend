@@ -1,0 +1,34 @@
+package net.sobestime.auth.service;
+
+import lombok.RequiredArgsConstructor;
+import net.sobestime.auth.config.TokenConfig;
+import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TokenCookieService {
+
+    private final TokenConfig tokenConfig;
+
+    public ResponseCookie createRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from(tokenConfig.getRefreshTokenName(), refreshToken)
+            .httpOnly(true)
+            .secure(tokenConfig.isSecure())
+            .path(tokenConfig.getRefreshTokenPath())
+            .maxAge(tokenConfig.getRefreshTokenExpiration().getSeconds())
+            .sameSite(tokenConfig.getSameSite())
+            .build();
+    }
+
+    public ResponseCookie createExpiredRefreshTokenCookie() {
+        return ResponseCookie.from(tokenConfig.getRefreshTokenName(), "")
+            .httpOnly(true)
+            .secure(tokenConfig.isSecure())
+            .path(tokenConfig.getRefreshTokenPath())
+            .maxAge(0)
+            .sameSite(tokenConfig.getSameSite())
+            .build();
+    }
+
+}

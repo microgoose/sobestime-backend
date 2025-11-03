@@ -1,3 +1,6 @@
+-- Расширение для генерации UUID
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Зарегистрированные пользователи (security)
 CREATE TABLE IF NOT EXISTS user_principal
 (

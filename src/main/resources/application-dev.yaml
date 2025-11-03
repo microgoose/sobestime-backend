@@ -6,6 +6,6 @@ app:
 
 spring:
   datasource:
-    url: jdbc:postgresql://90.156.158.101:5432/mocknet-db
-    username: mocknet
-    password: mocknet
+    url: jdbc:postgresql://90.156.158.101:5432/sobestime-db
+    username: sobestime
+    password: sobestime
