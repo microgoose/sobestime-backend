@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/interview-roles").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/skills").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/interview-requests").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/interview-slots/{interviewRequest}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-slots/*").permitAll()
 
                 .requestMatchers(HttpMethod.POST, "/api/v1/grades").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/interview-roles").hasRole("ADMIN")
