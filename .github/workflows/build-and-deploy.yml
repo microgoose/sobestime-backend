@@ -1,0 +1,71 @@
+name: Create and publish a develop Docker image
+
+on:
+  push:
+    branches: [ 'main' ]
+
+env:
+  REGISTRY: ghcr.io
+  APP_NAME: ${{ vars.APP_NAME }}
+  IMAGE_NAME: ${{ github.repository_owner }}/${{ vars.APP_NAME }}
+  TAG: ${{ github.ref_name }}-${{ github.sha }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+
+  deploy-to-server:
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    if: success()
+
+    steps:
+      - name: Deploy to remote server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            export SOBESTIME_BACKEND_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+            
+            docker compose pull ${{ env.APP_NAME }}
+            docker compose stop ${{ env.APP_NAME }}
+            docker compose up -d --no-deps ${{ env.APP_NAME }}
+            docker image prune -f
+            docker compose images
+            docker compose ps
