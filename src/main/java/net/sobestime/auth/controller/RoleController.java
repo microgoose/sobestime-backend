@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.sobestime.auth.dto.CreateRoleRequest;
+import net.sobestime.auth.dto.RoleDto;
 import net.sobestime.auth.model.Role;
 import net.sobestime.auth.service.RoleService;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,14 @@ public class RoleController {
 
     @Operation(summary = "Получить все")
     @GetMapping
-    public List<Role> getAll() {
-        return roleService.getAll();
+    public List<RoleDto> getAll() {
+        return roleService.getAll().stream()
+            .map(r -> RoleDto.builder()
+                .id(r.getId())
+                .name(r.getName())
+                .description(r.getDescription())
+                .build())
+            .toList();
     }
 
     @Operation(summary = "Создать роль")

@@ -7,6 +7,7 @@ import net.sobestime.app.dto.ErrorResponse;
 import net.sobestime.app.exception.IllegalActionException;
 import net.sobestime.app.exception.NotFoundException;
 import net.sobestime.app.exception.ValidationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,6 +28,15 @@ public class ExceptionController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleValidationError(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, ErrorResponse.builder()
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message("Некорректный запрос")
+            .timestamp(OffsetDateTime.now())
+            .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleValidationError(InvalidDataAccessApiUsageException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, ErrorResponse.builder()
             .code(HttpStatus.BAD_REQUEST.value())
             .message("Некорректный запрос")

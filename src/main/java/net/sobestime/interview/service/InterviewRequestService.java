@@ -36,6 +36,11 @@ public class InterviewRequestService {
         return mapper.toDto(repository.findAll(pageable));
     }
 
+    public InterviewRequestDto findById(UUID requestId) {
+        return mapper.toDto(repository.findById(requestId)
+            .orElseThrow(() -> new ValidationException(INTERVIEW_REQUEST_NOT_FOUND)));
+    }
+
     @Transactional
     public InterviewRequestDto saveRequest(UUID creatorId, CreateInterviewRequest request) {
         InterviewUser user = userRepository.findById(creatorId)

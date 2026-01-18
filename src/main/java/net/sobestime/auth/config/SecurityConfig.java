@@ -50,15 +50,33 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/roles").hasRole("ADMIN")
 
                 // Interview Service
+                // ================ Грейды ================
                 .requestMatchers(HttpMethod.GET, "/api/v1/grades").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/grades").hasAnyRole("ADMIN")
+                
+                // ================ Роли интервью ================
                 .requestMatchers(HttpMethod.GET, "/api/v1/interview-roles").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/interview-roles").hasAnyRole("ADMIN")
+                
+                // ================ Скиллы ================
                 .requestMatchers(HttpMethod.GET, "/api/v1/skills").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/skills").hasAnyRole("ADMIN")
+                
+                // ================ Заявки на интервью ================
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-requests/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/interview-requests").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/interview-slots/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/interview-requests").authenticated()
+                
+                // ================ Слоты ================
+                .requestMatchers(HttpMethod.POST, "/api/v1/interview-slots/*/approve").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/interview-slots/*/reject").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-slots").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/interview-slots").authenticated()
 
-                .requestMatchers(HttpMethod.POST, "/api/v1/grades").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/v1/interview-roles").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/v1/skills").hasRole("ADMIN")
+                // ================ Пользовательские данные ================
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/requests").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/interviews").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/slots").authenticated()
 
                 .anyRequest().authenticated()
             )

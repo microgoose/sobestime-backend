@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/interview-requests")
 @RequiredArgsConstructor
@@ -26,6 +28,12 @@ public class InterviewRequestController {
     @GetMapping
     public PageResponse<InterviewRequestDto> getInterviewRequests(@PageableDefault(size = 20) Pageable pageable) {
         return PageResponse.of(interviewRequestService.findAll(pageable));
+    }
+
+    @Operation(summary = "Получить заявку", description = "Получить конкретную заявку")
+    @GetMapping("/{requestId}")
+    public InterviewRequestDto getInterviewRequests(@PathVariable UUID requestId) {
+        return interviewRequestService.findById(requestId);
     }
 
     @Operation(summary = "Создать заявку")
