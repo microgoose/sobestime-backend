@@ -1,7 +1,6 @@
 package net.sobestime.auth.security;
 
 import lombok.RequiredArgsConstructor;
-import net.sobestime.auth.dto.AuthTokensDto;
 import net.sobestime.auth.service.AuthService;
 import net.sobestime.auth.service.JwtService;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,28 +24,19 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        try {
-            JwtAuthenticationToken authToken = (JwtAuthenticationToken) authentication;
-            String accessToken = authToken.getAccessToken();
-            String refreshToken = authToken.getRefreshToken();
+        JwtAuthenticationToken authToken = (JwtAuthenticationToken) authentication;
+        String accessToken = authToken.getAccessToken();
 
-            if (jwtService.isExpired(accessToken)) {
-                AuthTokensDto authTokensDto = authService.login(refreshToken);
-                accessToken = authTokensDto.getAccessToken();
-                refreshToken = authTokensDto.getRefreshToken();
-            }
-
-            if (jwtService.isValid(accessToken)) {
-                String email = jwtService.getEmailFromToken(accessToken);
-
-                if (email != null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                    return new JwtAuthenticationToken(
-                        userDetails, accessToken, refreshToken, userDetails.getAuthorities());
-                }
-            }
-
+        if (!jwtService.isValid(accessToken))
             throw new BadCredentialsException(INCORRECT_JWT_DATA);
+
+        String email = jwtService.getEmailFromToken(accessToken);
+        if (email == null || email.isEmpty())
+            throw new BadCredentialsException(INCORRECT_JWT_DATA);
+
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            return new JwtAuthenticationToken(userDetails, accessToken, userDetails.getAuthorities());
         } catch (Exception e) {
             throw new BadCredentialsException(AUTH_FAILED, e);
         }

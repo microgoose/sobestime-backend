@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthResponse {
-    private String accessToken;
+public class RefreshTokensRequest {
+    private String refreshToken;
 }

@@ -66,6 +66,8 @@ public class JwtService {
         return AuthTokensDto.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
+            .expiresIn(tokenConfig.getAccessTokenExpiration().getSeconds())
+            .tokenType(tokenConfig.getTokenType())
             .build();
     }
 

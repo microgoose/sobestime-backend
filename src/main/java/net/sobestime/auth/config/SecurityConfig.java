@@ -47,6 +47,7 @@ public class SecurityConfig {
 
                 // Auth Service
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").anonymous()
+                .requestMatchers("/api/v1/auth/refresh").permitAll()
                 .requestMatchers("/api/v1/roles").hasRole("ADMIN")
 
                 // Interview Service

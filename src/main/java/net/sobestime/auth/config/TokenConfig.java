@@ -19,6 +19,9 @@ public class TokenConfig {
     @Value("${app.auth.access-token-name}")
     private String accessTokenName;
 
+    @Value("${app.auth.token-type}")
+    private String tokenType;
+
     @Value("${app.auth.access-token-response-header}")
     private String accessTokenResponseHeader;
 

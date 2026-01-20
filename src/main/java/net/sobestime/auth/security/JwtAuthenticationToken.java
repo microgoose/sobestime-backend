@@ -10,18 +10,15 @@ import java.util.Collection;
 @Getter
 public class JwtAuthenticationToken extends UsernamePasswordAuthenticationToken {
     private final String accessToken;
-    private final String refreshToken;
 
-    public JwtAuthenticationToken(String accessToken, String refreshToken) {
+    public JwtAuthenticationToken(String accessToken) {
         super(null, null);
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
     }
 
     public JwtAuthenticationToken(UserDetails principal, String accessToken,
-                                  String refreshToken, Collection<? extends GrantedAuthority> authorities) {
+                                  Collection<? extends GrantedAuthority> authorities) {
         super(principal, null, authorities);
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
     }
 }
