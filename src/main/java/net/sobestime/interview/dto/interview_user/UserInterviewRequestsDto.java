@@ -13,6 +13,7 @@ import java.util.UUID;
 @Builder
 public class UserInterviewRequestsDto {
     private UUID uuid;
+    private InterviewUserDto creator;
     private String title;
     private Set<GradeDto> gradeUuids;
     private Set<SkillDto> skillUuids;

@@ -8,24 +8,30 @@ import net.sobestime.interview.repository.InterviewRoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import static net.sobestime.interview.config.MessageDictionary.ROLE_ALREADY_EXIST;
+import static net.sobestime.interview.config.MessageDictionary.ROLE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class InterviewRoleService {
 
-    private final InterviewRoleRepository repository;
+    private final InterviewRoleRepository roleRepository;
 
     public List<InterviewRole> getAll() {
-        return repository.findAll();
+        return roleRepository.findAll();
+    }
+
+    public InterviewRole getById(UUID roleId) {
+        return roleRepository.findById(roleId).orElseThrow(() -> new ValidationException(ROLE_NOT_FOUND));
     }
 
     public InterviewRole save(CreateInterviewRoleRequest request) {
-        if (repository.existsByName(request.getName()))
+        if (roleRepository.existsByName(request.getName()))
             throw new ValidationException(ROLE_ALREADY_EXIST);
 
-        return repository.save(InterviewRole.builder()
+        return roleRepository.save(InterviewRole.builder()
             .name(request.getName())
             .build());
     }

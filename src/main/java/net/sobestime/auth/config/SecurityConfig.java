@@ -77,7 +77,7 @@ public class SecurityConfig {
                 // ================ Пользовательские данные ================
                 .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/requests").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/interviews").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/slots").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/interview-user/slots/*").authenticated()
 
                 .anyRequest().authenticated()
             )

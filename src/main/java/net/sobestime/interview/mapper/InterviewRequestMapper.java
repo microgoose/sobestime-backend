@@ -61,6 +61,7 @@ public class InterviewRequestMapper {
         InterviewRequest request = projection.getInterviewRequest();
         return UserInterviewRequestsDto.builder()
             .uuid(request.getId())
+            .creator(interviewUserMapper.toDto(request.getCreator()))
             .title(request.getTitle())
             .skillUuids(skillMapper.toDto(request.getSkills()))
             .gradeUuids(gradeMapper.toDto(request.getGrades()))
@@ -72,5 +73,4 @@ public class InterviewRequestMapper {
     public Page<UserInterviewRequestsDto> toUserRequestDto(Page<InterviewRequestProjection> items) {
         return items.map(this::toUserRequestDto);
     }
-
 }

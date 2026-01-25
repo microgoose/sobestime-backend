@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -15,4 +16,6 @@ public interface ScheduledInterviewRepository extends JpaRepository<ScheduledInt
     @Query("select si from ScheduledInterview si " +
         "where si.request.creator.id = :userId or si.slot.booker.id = :userId")
     Page<ScheduledInterview> findUserInterviews(@Param("userId") UUID userId, Pageable pageable);
+
+    Optional<ScheduledInterview> findByRequest_Id(UUID requestId);
 }

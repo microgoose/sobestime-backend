@@ -1,12 +1,15 @@
 package net.sobestime.interview.service;
 
 import lombok.RequiredArgsConstructor;
+import net.sobestime.app.exception.IllegalActionException;
+import net.sobestime.app.exception.NotFoundException;
 import net.sobestime.app.exception.ValidationException;
 import net.sobestime.interview.dto.interview_request.CreateInterviewRequest;
 import net.sobestime.interview.dto.interview_request.InterviewRequestDto;
+import net.sobestime.interview.dto.interview_request.UpdateInterviewRequest;
 import net.sobestime.interview.mapper.InterviewRequestMapper;
 import net.sobestime.interview.model.*;
-import net.sobestime.interview.repository.*;
+import net.sobestime.interview.repository.InterviewRequestRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static net.sobestime.interview.config.MessageDictionary.*;
@@ -22,45 +26,58 @@ import static net.sobestime.interview.config.MessageDictionary.*;
 @RequiredArgsConstructor
 public class InterviewRequestService {
 
-    private final InterviewRequestRepository repository;
-    private final InterviewUserRepository userRepository;
-    private final InterviewRoleRepository roleRepository;
-    private final GradeRepository gradeRepository;
-    private final SkillRepository skillRepository;
-
+    private final InterviewRequestRepository requestRepository;
     private final InterviewRequestMapper mapper;
 
-    // TODO Serializing PageImpl instances as-is is not supported,
-    //  meaning that there is no guarantee about the stability of the resulting JSON structure!
-    public Page<InterviewRequestDto> findAll(Pageable pageable) {
-        return mapper.toDto(repository.findAll(pageable));
+    private final InterviewUserService userService;
+    private final InterviewRoleService roleService;
+    private final SkillService skillService;
+    private final GradeService gradeService;
+
+    // READ
+
+    public Page<InterviewRequestDto> getAll(Pageable pageable) {
+        return mapper.toDto(requestRepository.findAll(pageable));
     }
 
-    public InterviewRequestDto findById(UUID requestId) {
-        return mapper.toDto(repository.findById(requestId)
-            .orElseThrow(() -> new ValidationException(INTERVIEW_REQUEST_NOT_FOUND)));
+    public InterviewRequest getById(UUID requestId) {
+        return requestRepository.findById(requestId)
+            .orElseThrow(() -> new NotFoundException(INTERVIEW_REQUEST_NOT_FOUND));
+    }
+
+    public InterviewRequest getBySlotId(UUID slotId) {
+        return requestRepository.findBySlotId(slotId)
+            .orElseThrow(() -> new NotFoundException(INTERVIEW_REQUEST_NOT_FOUND));
+    }
+
+    public InterviewRequestDto viewById(UUID requestId) {
+        return mapper.toDto(getById(requestId));
+    }
+
+    // WRITE (request aggregate only)
+
+    @Transactional
+    public InterviewRequest save(InterviewRequest request) {
+        return requestRepository.save(request);
     }
 
     @Transactional
-    public InterviewRequestDto saveRequest(UUID creatorId, CreateInterviewRequest request) {
-        InterviewUser user = userRepository.findById(creatorId)
-            .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-        InterviewRole role = roleRepository.findById(request.getRoleUuid())
-            .orElseThrow(() -> new ValidationException(ROLE_NOT_FOUND));
+    public InterviewRequest updateStatus(InterviewRequest request, InterviewRequestStatus status) {
+        request.setStatus(status);
+        return requestRepository.save(request);
+    }
 
-        List<Skill> skills = skillRepository.findAllById(request.getSkillUuids());
+    @Transactional
+    public InterviewRequestDto createRequest(UUID creatorId, CreateInterviewRequest request) {
+        InterviewUser user = userService.getById(creatorId);
 
-        if (skills.size() != request.getSkillUuids().size())
-            throw new ValidationException(SKILLS_NOT_FOUND);
+        InterviewRole role = roleService.getById(request.getRoleUuid());
+        List<Skill> skills = skillService.getByIdIn(request.getSkillUuids());
+        List<Grade> grades = gradeService.getByIdIn(request.getGradeUuids());
 
-        List<Grade> grades = gradeRepository.findAllById(request.getGradeUuids());
+        // TODO: Валидировать title/description (длина, запрещённые символы и т.п.)
 
-        if (grades.size() != request.getGradeUuids().size())
-            throw new ValidationException(GRADES_NOT_FOUND);
-
-        // TODO  Валидировать описание: проверить на запрещённые символы
-
-        InterviewRequest interviewRequest = repository.save(InterviewRequest.builder()
+        InterviewRequest entity = InterviewRequest.builder()
             .title(request.getTitle())
             .description(request.getDescription())
             .status(InterviewRequestStatus.NEW)
@@ -69,10 +86,58 @@ public class InterviewRequestService {
             .grades(new HashSet<>(grades))
             .skills(new HashSet<>(skills))
             .slots(new HashSet<>())
-            .build());
+            .build();
 
-        return mapper.toDto(interviewRequest);
+        return mapper.toDto(save(entity));
     }
 
-    // todo cancel request
+    @Transactional
+    public InterviewRequestDto updateRequest(UUID creatorId, UUID requestId, UpdateInterviewRequest update) {
+        InterviewUser user = userService.getById(creatorId);
+        InterviewRequest request = getById(requestId);
+
+        assertOwner(request, user, INTERVIEW_REQUEST_UPDATE_OWNER_CONFLICT);
+        assertEditable(request);
+
+        InterviewRole role = roleService.getById(update.getRoleUuid());
+        List<Skill> skills = skillService.getByIdIn(update.getSkillUuids());
+        List<Grade> grades = gradeService.getByIdIn(update.getGradeUuids());
+
+        request.setTitle(update.getTitle());
+        request.setDescription(update.getDescription());
+        request.setRole(role);
+        request.setGrades(new HashSet<>(grades));
+        request.setSkills(new HashSet<>(skills));
+
+        return mapper.toDto(requestRepository.save(request));
+    }
+
+    public void validateCancelableByCreator(UUID creatorId, InterviewRequest request) {
+        InterviewUser user = userService.getById(creatorId);
+
+        assertOwner(request, user, INTERVIEW_REQUEST_CANCEL_OWNER_CONFLICT);
+
+        // У вас запрещено отменять только ENDED — оставляем как есть.
+        if (request.getStatus().equals(InterviewRequestStatus.ENDED)) {
+            throw new ValidationException(String.format(
+                INTERVIEW_REQUEST_CANCEL_STATUS_CONFLICT, request.getStatus().getDescription()
+            ));
+        }
+    }
+
+    // --- helpers ---
+
+    private void assertOwner(InterviewRequest request, InterviewUser user, String reason) {
+        if (!Objects.equals(request.getCreator().getId(), user.getId())) {
+            throw new ValidationException(reason);
+        }
+    }
+
+    private void assertEditable(InterviewRequest request) {
+        if (!request.getStatus().equals(InterviewRequestStatus.NEW)) {
+            throw new IllegalActionException(String.format(
+                INTERVIEW_REQUEST_UPDATE_STATUS_CONFLICT, request.getStatus().getDescription()
+            ));
+        }
+    }
 }

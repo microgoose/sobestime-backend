@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -25,4 +26,8 @@ public interface InterviewSlotRepository extends JpaRepository<InterviewSlot, UU
         "LEFT JOIN FETCH islot.request " +
         "WHERE islot.booker.id = :bookerId")
     Page<InterviewSlot> findByBooker_Id(@Param("bookerId") UUID bookerId, Pageable pageable);
+
+    Page<InterviewSlot> findByRequest_Creator_Id(UUID creatorId, Pageable pageable);
+
+    List<InterviewSlot> findByRequest_Id(UUID requestId);
 }

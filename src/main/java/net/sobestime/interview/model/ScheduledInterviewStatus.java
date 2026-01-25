@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ScheduledInterviewStatus {
     PLANNED("Планируется"),
+    RUN("В эфире"),
     ENDED("Завершено"),
     CANCELLED("Отменено");
 

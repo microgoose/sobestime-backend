@@ -2,6 +2,7 @@ package net.sobestime.interview.config;
 
 public class MessageDictionary {
     public static final String INTERVIEW_REQUEST_NOT_FOUND = "Не удалось найти заявку";
+    public static final String SCHEDULED_INTERVIEW_NOT_FOUND = "Не удалось найти запланированное интервью";
     public static final String USER_NOT_FOUND = "Не удалось найти пользователя";
     public static final String ROLE_NOT_FOUND = "Не удалось найти роль";
     public static final String GRADES_NOT_FOUND = "Не удалось найти все грейды";
@@ -15,6 +16,13 @@ public class MessageDictionary {
     public static final String INTERVIEW_REQUEST_APPROVE_CONFLICT = "Подтверждать слот может только создатель";
     public static final String INTERVIEW_REQUEST_REJECT_CONFLICT = "Отклонять слот может только создатель";
     public static final String SLOT_BOOKER_CREATOR_CONFLICT = "Нельзя создать слот для своей заявки";
+    public static final String SLOT_CANCEL_CONFLICT = "Отменить можно только свой слот";
+    public static final String INTERVIEW_REQUEST_UPDATE_OWNER_CONFLICT = "Можно изменить только своё интервью";
+    public static final String INTERVIEW_REQUEST_UPDATE_STATUS_CONFLICT = "Нельзя изменять интервью в статусе `%s`";
+    public static final String INTERVIEW_REQUEST_CANCEL_OWNER_CONFLICT = "Можно отменять только своё интервью";
+    public static final String INTERVIEW_REQUEST_CANCEL_STATUS_CONFLICT = "Нельзя отменить интервью в статусе `%s`";
+    public static final String SCHEDULED_INTERVIEW_RUN_CANCEL_CONFLICT = "Нельзя отменить текущее интервью";
+    public static final String SCHEDULED_INTERVIEW_END_CANCEL_CONFLICT = "Нельзя отменить завершённое интервью";
 
     public static final String GRADE_ALREADY_EXIST = "Грейд уже существует";
     public static final String SKILL_ALREADY_EXIST = "Скилл уже существует";

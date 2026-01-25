@@ -11,6 +11,7 @@ import net.sobestime.interview.dto.interview_slot.CreateInterviewSlotRequest;
 import net.sobestime.interview.dto.interview_slot.InterviewRequestSlotDto;
 import net.sobestime.interview.dto.interview_slot.InterviewSlotDto;
 import net.sobestime.interview.service.InterviewSlotService;
+import net.sobestime.interview.service.InterviewUseCaseService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -25,32 +26,40 @@ import java.util.UUID;
 public class InterviewSlotController {
 
     private final InterviewSlotService interviewSlotService;
+    private final InterviewUseCaseService interviewUseCaseService;
 
-    @Operation(summary = "Получить слот по заявке")
+    @Operation(summary = "Получить слоты по заявке")
     @GetMapping("/{interviewRequest}")
     public PageResponse<InterviewRequestSlotDto> getSlotsByRequest(@PathVariable UUID interviewRequest,
                                                                    @PageableDefault(size = 20) Pageable pageable) {
-        return PageResponse.of(interviewSlotService.findSlotsByRequest(interviewRequest, pageable));
+        return PageResponse.of(interviewSlotService.viewByRequestId(interviewRequest, pageable));
     }
 
-    @Operation(summary = "Создать слот")
+    @Operation(summary = "Создать слоты", description = "Предложение времени проведения интервью")
     @PostMapping
     public List<InterviewSlotDto> createSlots(@RequestSender UserPrincipal user,
                                               @RequestBody @Valid CreateInterviewSlotRequest request) {
-        return interviewSlotService.createSlots(user.getId(), request);
+        return interviewUseCaseService.createSlots(user.getId(), request);
     }
 
-    @Operation(summary = "Подтвердить слот")
+    @Operation(summary = "Отменить слоты", description = "Отменить определённое время проведения интервью")
+    @PostMapping("{slotId}/cancel")
+    public InterviewSlotDto cancelSlots(@RequestSender UserPrincipal user,
+                                        @PathVariable UUID slotId) {
+        return interviewUseCaseService.cancelSlot(user.getId(), slotId);
+    }
+
+    @Operation(summary = "Подтвердить слот", description = "Согласится на предложение по времени для интервью")
     @PostMapping("{slotId}/approve")
     public InterviewSlotDto approveBook(@RequestSender UserPrincipal user,
                                         @PathVariable UUID slotId) {
-        return interviewSlotService.approveSlot(user.getId(), slotId);
+        return interviewUseCaseService.approveSlot(user.getId(), slotId);
     }
 
-    @Operation(summary = "Отклонить слот")
+    @Operation(summary = "Отклонить слот", description = "Отклонить предложенное время проведения интервью")
     @PostMapping("{slotId}/reject")
     public InterviewSlotDto rejectBook(@RequestSender UserPrincipal user,
                                        @PathVariable UUID slotId) {
-        return interviewSlotService.rejectSlot(user.getId(), slotId);
+        return interviewUseCaseService.rejectSlot(user.getId(), slotId);
     }
 }

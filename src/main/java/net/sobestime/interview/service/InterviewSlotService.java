@@ -12,7 +12,6 @@ import net.sobestime.interview.dto.interview_user.InterviewUserDto;
 import net.sobestime.interview.mapper.InterviewSlotMapper;
 import net.sobestime.interview.mapper.InterviewUserMapper;
 import net.sobestime.interview.model.*;
-import net.sobestime.interview.repository.InterviewRequestRepository;
 import net.sobestime.interview.repository.InterviewSlotRepository;
 import net.sobestime.interview.repository.InterviewUserRepository;
 import org.springframework.data.domain.Page;
@@ -31,16 +30,20 @@ import static net.sobestime.interview.config.MessageDictionary.*;
 @RequiredArgsConstructor
 public class InterviewSlotService {
 
-    private final ScheduledInterviewService interviewService;
     private final InterviewSlotRepository slotRepository;
-    private final InterviewRequestRepository requestRepository;
-    private final InterviewUserRepository userRepository;
     private final InterviewSlotMapper slotMapper;
+
+    private final InterviewUserRepository userService;
     private final InterviewUserMapper userMapper;
     private final EntityManager em;
 
-    public Page<InterviewRequestSlotDto> findSlotsByRequest(UUID interviewRequest, Pageable pageable) {
-        Page<InterviewSlot> slots = slotRepository.findByRequestIdWithBooker(interviewRequest, pageable);
+    public InterviewSlot getById(UUID id) {
+        return slotRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(SLOT_NOT_FOUND));
+    }
+
+    public Page<InterviewRequestSlotDto> viewByRequestId(UUID interviewRequestId, Pageable pageable) {
+        Page<InterviewSlot> slots = slotRepository.findByRequestIdWithBooker(interviewRequestId, pageable);
         Map<UUID, InterviewRequestSlotDto> slotDtos = new HashMap<>();
 
         for (InterviewSlot slot : slots) {
@@ -67,28 +70,27 @@ public class InterviewSlotService {
         );
     }
 
+    public List<InterviewSlot> getByRequestId(UUID requestId) {
+        return slotRepository.findByRequest_Id(requestId);
+    }
+
     @Transactional
-    public List<InterviewSlotDto> createSlots(UUID bookerId, CreateInterviewSlotRequest request) {
-        InterviewRequest interviewRequest = requestRepository.findById(request.getInterviewRequestUuid())
-            .orElseThrow(() -> new NotFoundException(INTERVIEW_REQUEST_NOT_FOUND));
-
-        if (!Objects.equals(interviewRequest.getStatus(), InterviewRequestStatus.NEW))
+    public List<InterviewSlotDto> createSlots(UUID bookerId, InterviewRequest interviewRequest, CreateInterviewSlotRequest request) {
+        if (!Objects.equals(interviewRequest.getStatus(), InterviewRequestStatus.NEW)) {
             throw new ValidationException(SLOT_INTERVIEW_STATUS_CONFLICT);
+        }
 
-        UUID interviewRequestUuid = request.getInterviewRequestUuid();
-        UUID creatorId = userRepository.findUserIdByRequestId(interviewRequestUuid);
+        UUID interviewRequestUuid = interviewRequest.getId();
+        UUID creatorId = userService.findUserIdByRequestId(interviewRequestUuid);
         List<InterviewSlot> slots = new ArrayList<>();
 
         for (OffsetDateTime startTimeWithOffset : request.getStartTimes()) {
             Instant startTime = startTimeWithOffset.toInstant();
 
-            // todo not in past
-
             if (slotRepository.existsByRequest_IdAndBooker_IdAndStartTime(interviewRequestUuid, bookerId, startTime))
                 throw new ValidationException(SLOT_ALREADY_TAKEN_BY_YOU);
 
             boolean isOwnerBooking = Objects.equals(creatorId, bookerId);
-
             if (isOwnerBooking)
                 throw new ValidationException(SLOT_BOOKER_CREATOR_CONFLICT);
 
@@ -104,44 +106,15 @@ public class InterviewSlotService {
     }
 
     @Transactional
-    public InterviewSlotDto approveSlot(UUID creatorId, UUID slotId) {
-        InterviewRequest request = requestRepository.findBySlotId(slotId)
-            .orElseThrow(() -> new NotFoundException(INTERVIEW_REQUEST_NOT_FOUND));
-        InterviewSlot slot = slotRepository.findById(slotId)
-            .orElseThrow(() -> new NotFoundException(SLOT_NOT_FOUND));
-
-        if (!request.getCreator().getId().equals(creatorId))
-            throw new ValidationException(INTERVIEW_REQUEST_APPROVE_CONFLICT);
-        if (slot.getStatus().equals(ConfirmationStatus.CONFIRMED))
-            throw new ValidationException(SLOT_ALREADY_APPROVED_CONFLICT);
-
-        request.setStatus(InterviewRequestStatus.PLANNED);
-        slot.setStatus(ConfirmationStatus.CONFIRMED);
-
-        interviewService.createScheduledInterview(request, slot);
-        requestRepository.save(request);
-        return slotMapper.toDto(slotRepository.save(slot));
+    public InterviewSlot updateStatus(InterviewSlot slot, ConfirmationStatus status) {
+        slot.setStatus(status);
+        return slotRepository.save(slot);
     }
 
     @Transactional
-    public InterviewSlotDto rejectSlot(UUID creatorId, UUID slotId) {
-        InterviewRequest request = requestRepository.findBySlotId(slotId)
-            .orElseThrow(() -> new NotFoundException(INTERVIEW_REQUEST_NOT_FOUND));
-        InterviewSlot slot = slotRepository.findById(slotId)
-            .orElseThrow(() -> new NotFoundException(SLOT_NOT_FOUND));
-
-        if (!request.getCreator().getId().equals(creatorId))
-            throw new ValidationException(INTERVIEW_REQUEST_REJECT_CONFLICT);
-        if (slot.getStatus().equals(ConfirmationStatus.REJECTED))
-            throw new ValidationException(SLOT_ALREADY_REJECTED_CONFLICT);
-
-        request.setStatus(InterviewRequestStatus.NEW);
-        slot.setStatus(ConfirmationStatus.REJECTED);
-
-        requestRepository.save(request);
-        return slotMapper.toDto(slotRepository.save(slot));
+    public List<InterviewSlot> updateStatus(List<InterviewSlot> slots, ConfirmationStatus status) {
+        slots.forEach(s -> s.setStatus(status));
+        return slotRepository.saveAll(slots);
     }
-
-    // TODO cancel book
 
 }

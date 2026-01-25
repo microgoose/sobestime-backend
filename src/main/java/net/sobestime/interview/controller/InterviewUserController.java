@@ -19,29 +19,64 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/interview-user")
 @RequiredArgsConstructor
-@Tag(name = "Пользователь")
+@Tag(name = "Пользователь интервью")
 public class InterviewUserController {
 
     private final InterviewUserService interviewUserService;
 
-    @Operation(summary = "Заявки пользователя", description = "Получить заявки пользователя постранично")
+    @Operation(
+        summary = "Заявки пользователя",
+        description = "Получить список заявок на интервью, созданных текущим пользователем, постранично"
+    )
     @GetMapping("/requests")
-    public PageResponse<UserInterviewRequestsDto> getUserRequests(@RequestSender UserPrincipal user,
-                                                          @PageableDefault(size = 20) Pageable pageable) {
-        return PageResponse.of(interviewUserService.findUserRequests(user.getId(), pageable));
+    public PageResponse<UserInterviewRequestsDto> getUserInterviewRequests(
+        @RequestSender UserPrincipal user,
+        @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return PageResponse.of(
+            interviewUserService.getUserRequestsByCreatorId(user.getId(), pageable)
+        );
     }
 
-    @Operation(summary = "Планируемые интервью пользователя", description = "Получить планируемые интервью пользователя постранично")
+    @Operation(
+        summary = "Планируемые интервью пользователя",
+        description = "Получить список интервью, запланированных для текущего пользователя, постранично"
+    )
     @GetMapping("/interviews")
-    public PageResponse<UserScheduledInterviewDto> getUserInterviews(@RequestSender UserPrincipal user,
-                                                                     @PageableDefault(size = 20) Pageable pageable) {
-        return PageResponse.of(interviewUserService.findUserInterviews(user.getId(), pageable));
+    public PageResponse<UserScheduledInterviewDto> getUserScheduledInterviews(
+        @RequestSender UserPrincipal user,
+        @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return PageResponse.of(
+            interviewUserService.getUserInterviews(user.getId(), pageable)
+        );
     }
 
-    @Operation(summary = "Слоты пользователя", description = "Получить поданные слоты пользователя постранично")
-    @GetMapping("/slots")
-    public PageResponse<UserInterviewSlotDto> getUserSlots(@RequestSender UserPrincipal user,
-                                                           @PageableDefault(size = 20) Pageable pageable) {
-        return PageResponse.of(interviewUserService.findUserSlots(user.getId(), pageable));
+    @Operation(
+        summary = "Полученные слоты пользователя",
+        description = "Получить слоты интервью, предложенные другими пользователями текущему пользователю, постранично"
+    )
+    @GetMapping("/slots/received")
+    public PageResponse<UserInterviewSlotDto> getReceivedInterviewSlots(
+        @RequestSender UserPrincipal user,
+        @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return PageResponse.of(
+            interviewUserService.getReceived(user.getId(), pageable)
+        );
+    }
+
+    @Operation(
+        summary = "Отправленные слоты пользователя",
+        description = "Получить слоты интервью, отправленные текущим пользователем другим пользователям, постранично"
+    )
+    @GetMapping("/slots/sent")
+    public PageResponse<UserInterviewSlotDto> getSentInterviewSlots(
+        @RequestSender UserPrincipal user,
+        @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return PageResponse.of(
+            interviewUserService.getSentSlots(user.getId(), pageable)
+        );
     }
 }
